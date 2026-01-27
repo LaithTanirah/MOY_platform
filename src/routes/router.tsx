@@ -5,6 +5,8 @@ import NotFound from "../pages/not-found";
 import LoginPage from "@/pages/auth/login-page";
 import PersonProfile from "@/pages/profile/person-profile";
 import OrganizationProfile from "@/pages/profile/organization-profile";
+import ReservationPage from "@/pages/profile/reservation";
+import ServicesPage from "@/pages/services";
 
 const routes = createBrowserRouter([
   {
@@ -28,6 +30,14 @@ const routes = createBrowserRouter([
   {
     path: "/organization-profile",
     element: <OrganizationProfile />,
+  },
+  {
+    path: "/reservation",
+    element: <ReservationPage />,
+  },
+   {
+    path: "/services",
+    element: <ServicesPage />,
   },
   {
     path: "*",
