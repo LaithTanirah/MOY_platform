@@ -1,7 +1,7 @@
 // src/components/reservation-form.tsx
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,9 +39,13 @@ function Select({
         "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
       )}
     >
-      {placeholder ? <option value="">{placeholder}</option> : null}
+      {placeholder ? (
+        <option value="" className="dark:text-black">
+          {placeholder}
+        </option>
+      ) : null}
       {options.map((o) => (
-        <option key={o.value} value={o.value}>
+        <option key={o.value} value={o.value} className="dark:text-black">
           {o.label}
         </option>
       ))}
@@ -64,6 +68,28 @@ export default function ReservationForm({
   ...props
 }: React.ComponentProps<"div">) {
   const { t } = useTranslation();
+
+  const [serviceType, setServiceType] = useState("");
+  const [house, setHouse] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [beneficiaries, setBeneficiaries] = useState("1");
+
+  const [facility, setFacility] = useState<FacilityType>("");
+  const [availableCapacity] = useState("15");
+
+  const [requiredRooms, setRequiredRooms] = useState("1");
+  const [requiredTents, setRequiredTents] = useState("1");
+  const [requiredSuites, setRequiredSuites] = useState("1");
+  const [requiredChalets, setRequiredChalets] = useState("1");
+
+  const [activityPlan, setActivityPlan] = useState("");
+  const [groupLeader, setGroupLeader] = useState("");
+  const [participantsInfo, setParticipantsInfo] = useState("");
+
+  const showFacilitySection = serviceType === "accommodation";
+  const showActivitySection = serviceType === "activity";
+  const showCapacity = showFacilitySection && facility !== "";
 
   const serviceOptions: Option[] = useMemo(
     () => [
@@ -98,33 +124,10 @@ export default function ReservationForm({
     [t],
   );
 
-  const [serviceType, setServiceType] = useState("");
-  const [house, setHouse] = useState("");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [beneficiaries, setBeneficiaries] = useState("10");
-
-  const [facility, setFacility] = useState<FacilityType>("");
-  const [availableCapacity] = useState("15"); 
-
-
-  const [requiredRooms, setRequiredRooms] = useState("1");
-  const [requiredTents, setRequiredTents] = useState("1");
-  const [requiredSuites, setRequiredSuites] = useState("1");
-  const [requiredChalets, setRequiredChalets] = useState("1");
-
-  const [activityPlan, setActivityPlan] = useState("");
-  const [groupLeader, setGroupLeader] = useState("");
-  const [participantsInfo, setParticipantsInfo] = useState("");
-
   const durationDays = useMemo(
     () => daysBetween(fromDate, toDate),
     [fromDate, toDate],
   );
-
-  const showFacilitySection = serviceType === "accommodation";
-
-  const showCapacity = showFacilitySection && facility !== "";
 
   const activeCountKey = useMemo(() => {
     if (!showFacilitySection) return "";
@@ -215,7 +218,23 @@ export default function ReservationForm({
                 </div>
               </div>
 
+              {/* First row */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Youth House */}
+                <Field>
+                  <FieldLabel htmlFor="house">
+                    {t("reservation.fields.youthHouse")}
+                  </FieldLabel>
+                  <Select
+                    id="house"
+                    value={house}
+                    onChange={setHouse}
+                    options={houseOptions}
+                    placeholder={t("reservation.placeholders.select")}
+                  />
+                </Field>
+
+                {/* Service Type */}
                 <Field>
                   <FieldLabel htmlFor="serviceType">
                     {t("reservation.fields.serviceType")}
@@ -234,21 +253,9 @@ export default function ReservationForm({
                     placeholder={t("reservation.placeholders.select")}
                   />
                 </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="house">
-                    {t("reservation.fields.youthHouse")}
-                  </FieldLabel>
-                  <Select
-                    id="house"
-                    value={house}
-                    onChange={setHouse}
-                    options={houseOptions}
-                    placeholder={t("reservation.placeholders.select")}
-                  />
-                </Field>
               </FieldGroup>
 
+              {/* Second row */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Field>
                   <FieldLabel htmlFor="fromDate">
@@ -289,6 +296,7 @@ export default function ReservationForm({
                 </Field>
               </FieldGroup>
 
+              {/* Third row */}
               <FieldGroup>
                 <Field>
                   <FieldLabel htmlFor="beneficiaries">
@@ -305,6 +313,9 @@ export default function ReservationForm({
                 </Field>
               </FieldGroup>
 
+              <hr className="border-border" />
+
+              {/* SECTION: Facility */}
               {showFacilitySection && (
                 <>
                   <hr />
@@ -371,73 +382,76 @@ export default function ReservationForm({
                 </>
               )}
 
-              <hr />
-
               {/* SECTION: Activity */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CalendarDays className="h-5 w-5 text-primary" />
-                  <h2 className="text-lg font-semibold">
-                    {t("reservation.sections.activity")}
-                  </h2>
-                </div>
-              </div>
+              {showActivitySection && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <CalendarDays className="h-5 w-5 text-primary" />
+                      <h2 className="text-lg font-semibold">
+                        {t("reservation.sections.activity")}
+                      </h2>
+                    </div>
+                  </div>
 
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="activityPlan">
-                    {t("reservation.fields.activityPlan")}
-                  </FieldLabel>
-                  <Textarea
-                    id="activityPlan"
-                    placeholder={t("reservation.placeholders.activityPlan")}
-                    value={activityPlan}
-                    onChange={(e) => setActivityPlan(e.target.value)}
-                  />
-                </Field>
-              </FieldGroup>
+                  <FieldGroup>
+                    <Field>
+                      <FieldLabel htmlFor="activityPlan">
+                        {t("reservation.fields.activityPlan")}
+                      </FieldLabel>
+                      <Textarea
+                        id="activityPlan"
+                        placeholder={t("reservation.placeholders.activityPlan")}
+                        value={activityPlan}
+                        onChange={(e) => setActivityPlan(e.target.value)}
+                      />
+                    </Field>
+                  </FieldGroup>
 
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="groupLeader">
-                    {t("reservation.fields.groupLeader")}
-                  </FieldLabel>
-                  <Input
-                    id="groupLeader"
-                    placeholder={t("reservation.placeholders.groupLeader")}
-                    value={groupLeader}
-                    onChange={(e) => setGroupLeader(e.target.value)}
-                    required
-                  />
-                </Field>
-              </FieldGroup>
+                  <FieldGroup>
+                    <Field>
+                      <FieldLabel htmlFor="groupLeader">
+                        {t("reservation.fields.groupLeader")}
+                      </FieldLabel>
+                      <Input
+                        id="groupLeader"
+                        placeholder={t("reservation.placeholders.groupLeader")}
+                        value={groupLeader}
+                        onChange={(e) => setGroupLeader(e.target.value)}
+                        required
+                      />
+                    </Field>
+                  </FieldGroup>
 
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="participantsInfo">
-                    {t("reservation.fields.participantsInfo")}
-                  </FieldLabel>
-                  <Textarea
-                    id="participantsInfo"
-                    placeholder={t("reservation.placeholders.participantsInfo")}
-                    value={participantsInfo}
-                    onChange={(e) => setParticipantsInfo(e.target.value)}
-                  />
-                </Field>
-              </FieldGroup>
-
-              {/* Buttons */}
-              <div className="flex items-center gap-4">
-                <Button type="button" variant="secondary" className="px-10">
-                  {t("common.cancel")}
-                </Button>
-                <Button type="submit" className="flex-1 py-6 text-base">
-                  {t("reservation.actions.submit")}
-                </Button>
-              </div>
+                  <FieldGroup>
+                    <Field>
+                      <FieldLabel htmlFor="participantsInfo">
+                        {t("reservation.fields.participantsInfo")}
+                      </FieldLabel>
+                      <Textarea
+                        id="participantsInfo"
+                        placeholder={t(
+                          "reservation.placeholders.participantsInfo",
+                        )}
+                        value={participantsInfo}
+                        onChange={(e) => setParticipantsInfo(e.target.value)}
+                      />
+                    </Field>
+                  </FieldGroup>
+                </>
+              )}
             </FieldGroup>
           </form>
         </CardContent>
+        {/* Buttons */}
+        <CardFooter className="flex flex-wrap items-center gap-5">
+          <Button type="submit" className="flex-1 py-6 text-base">
+            {t("reservation.actions.submit")}
+          </Button>
+          <Button type="button" variant="secondary" className="px-10">
+            {t("common.cancel")}
+          </Button>
+        </CardFooter>
       </Card>
     </div>
   );

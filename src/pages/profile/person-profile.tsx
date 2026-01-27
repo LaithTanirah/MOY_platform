@@ -1,4 +1,4 @@
-import PersonForm from "@/components/person-form";
+import PersonForm from "@/components/forms/person-form";
 
 export default function PersonProfile() {
   return (

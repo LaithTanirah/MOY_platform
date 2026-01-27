@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 
 function AppLayout() {
   return (
-    <div>
+    <div className="flex flex-col h-dvh">
       <Navbar />
       <hr />
       <Outlet /> {/* renders child routes */}

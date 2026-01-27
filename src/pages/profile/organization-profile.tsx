@@ -1,4 +1,4 @@
-import OrganizationForm from "@/components/organization-form";
+import OrganizationForm from "@/components/forms/organization-form";
 
 export default function OrganizationProfile() {
   return (

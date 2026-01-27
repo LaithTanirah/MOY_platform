@@ -3,6 +3,7 @@ import { ModeToggle } from "../common/mode-toggle";
 import { Button } from "../ui/button";
 import LangToggle from "../common/lang-toggle";
 import { useTranslation } from "react-i18next";
+import { Hotel } from "lucide-react";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -13,12 +14,18 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="w-full shadow-md bg-slate/100/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-700 px-6 py-4.5 h-20">
-      <div className="flex items-center justify-around">
+    <nav className="w-full shadow-md bg-slate/100/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-700 px-6 py-3 h-20">
+      <div className="flex items-center justify-between">
         {/* left */}
-        <div className="flex items-center space-x-4 ">
-          <div className="shrink-0 text-slate-600 dark:text-slate-200 text-2xl font-bold">
-            <Link to="/">{t("appName")}</Link>
+        <div className="flex items-center space-x-3">
+          <Hotel className="size-10 text-primary relative top-1" />
+          <div className="flex shrink-0 text-2xl font-bold">
+            <div>
+              <Link to="/">{t("appName")}</Link>
+              <p className="relative top-1 text-[13px] text-slate-700 dark:text-slate-300 opacity-90">
+                {t("form.reservation")}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -27,17 +34,17 @@ export default function Navbar() {
         {/* center */}
         <div className="hidden sm:flex space-x-6">
           <Link to="/">
-            <p className="text-slate-600 dark:text-slate-200 hover:underline hover:decoration-primary hover:decoration-2 font-medium">
+            <p className="hover:underline hover:decoration-primary hover:decoration-2 font-medium">
               {t("nav.home")}
             </p>{" "}
           </Link>
           <Link to="/">
-            <p className="text-slate-600 dark:text-slate-200 hover:underline hover:decoration-primary hover:decoration-2 font-medium">
+            <p className="hover:underline hover:decoration-primary hover:decoration-2 font-medium">
               {t("nav.about")}
             </p>{" "}
           </Link>
           <Link to="/">
-            <p className="text-slate-600 dark:text-slate-200 hover:underline hover:decoration-primary hover:decoration-2 font-medium">
+            <p className="hover:underline hover:decoration-primary hover:decoration-2 font-medium">
               {t("nav.contact")}
             </p>{" "}
           </Link>

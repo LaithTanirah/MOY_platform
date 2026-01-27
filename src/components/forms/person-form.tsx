@@ -1,13 +1,14 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { User } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Checkbox } from "./ui/checkbox";
+import { Checkbox } from "../ui/checkbox";
 import { useState } from "react";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "../ui/textarea";
+import { useNavigate } from "react-router-dom";
 
 export default function PersonForm({
   className,
@@ -15,6 +16,11 @@ export default function PersonForm({
 }: React.ComponentProps<"div">) {
   const { t } = useTranslation();
   const [checked, setChecked] = useState(false);
+  const navigate = useNavigate();
+
+  const handeleServiceBtn = () => {
+    navigate("/services");
+  };
 
   return (
     <div
@@ -122,7 +128,6 @@ export default function PersonForm({
                   ) : (
                     <Input
                       id="embership-number"
-                      value="173543"
                       readOnly
                       className="bg-muted cursor-not-allowed"
                     />
@@ -130,7 +135,7 @@ export default function PersonForm({
                 </Field>
               </FieldGroup>
 
-              <hr />
+              <hr className="border-border" />
 
               {/* 4th row */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -139,7 +144,12 @@ export default function PersonForm({
                   <FieldLabel htmlFor="birth">
                     {t("profile.individual.birth")}
                   </FieldLabel>
-                  <Input id="birth" type="date" />
+                  <Input
+                    id="birth"
+                    value="11/03/1995"
+                    readOnly
+                    className="bg-muted cursor-not-allowed"
+                  />
                 </Field>
 
                 {/* civil number */}
@@ -147,7 +157,12 @@ export default function PersonForm({
                   <FieldLabel htmlFor="civil">
                     {t("profile.individual.civil")}
                   </FieldLabel>
-                  <Input id="civil" type="number" placeholder="12312" />
+                  <Input
+                    id="civil"
+                    value="12312"
+                    readOnly
+                    className="bg-muted cursor-not-allowed"
+                  />
                 </Field>
               </FieldGroup>
 
@@ -195,7 +210,7 @@ export default function PersonForm({
                 </Field>
               </FieldGroup>
 
-              {/* residenceValidity */}
+              {/* Residence validity */}
               <FieldGroup>
                 <Field>
                   <FieldLabel htmlFor="residenceValidity">
@@ -224,19 +239,21 @@ export default function PersonForm({
                   />
                 </Field>
               </FieldGroup>
-
-              {/* Buttons */}
-              <div className="flex gap-5">
-                <Button className="px-10">
-                  {t("profile.individual.edit")}
-                </Button>
-                <Button className="px-10 bg-green-700 hover:bg-green-600">
-                  {t("profile.individual.service")}
-                </Button>
-              </div>
             </FieldGroup>
           </form>
         </CardContent>
+        {/* Buttons */}
+        <CardFooter className="flex gap-5">
+          <Button className="px-5 sm:px-10">
+            {t("profile.individual.edit")}
+          </Button>
+          <Button
+            className="px-5 sm:px-10 bg-green-700 hover:bg-green-600"
+            onClick={handeleServiceBtn}
+          >
+            {t("profile.individual.service")}
+          </Button>
+        </CardFooter>
       </Card>
     </div>
   );

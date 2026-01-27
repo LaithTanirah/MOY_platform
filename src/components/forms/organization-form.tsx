@@ -1,17 +1,23 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { User } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "../ui/textarea";
+import { useNavigate } from "react-router-dom";
 
 export default function OrganizationForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const handeleServiceBtn = () => {
+    navigate("/services");
+  };
 
   return (
     <div
@@ -39,105 +45,107 @@ export default function OrganizationForm({
             <FieldGroup>
               {/* first row */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* name */}
+                {/* Commercial name */}
                 <Field>
-                  <FieldLabel htmlFor="name">
-                    {t("profile.individual.name")}
+                  <FieldLabel htmlFor="commercial">
+                    {t("profile.organization.commercial")}
                   </FieldLabel>
                   <Input
-                    id="name"
-                    value="name"
+                    id="commercial"
+                    value=""
                     readOnly
                     className="bg-muted cursor-not-allowed"
                   />
                 </Field>
 
-                {/* ID number */}
+                {/* type */}
                 <Field>
-                  <FieldLabel htmlFor="id">
-                    {t("profile.individual.idNumber")}
+                  <FieldLabel htmlFor="type">
+                    {t("profile.organization.type")}
                   </FieldLabel>
                   <Input
-                    id="id"
-                    value="123"
-                    readOnly
-                    className="bg-muted cursor-not-allowed"
-                  />
-                </Field>
-              </FieldGroup>
-
-              {/* residenceValidity */}
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="residenceValidity">
-                    {t("profile.individual.residenceValidity")}
-                  </FieldLabel>
-                  <Input
-                    id="residenceValidity"
-                    value="13/12/2025"
+                    id="type"
+                    value=""
                     readOnly
                     className="bg-muted cursor-not-allowed"
                   />
                 </Field>
               </FieldGroup>
 
-              {/* Residence details */}
+              {/* company capital */}
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="ResidenceDetails">
-                    {t("profile.individual.ResidenceDetails")}
+                  <FieldLabel htmlFor="capital">
+                    {t("profile.organization.capital")}
+                  </FieldLabel>
+                  <Input
+                    id="capital"
+                    value=""
+                    readOnly
+                    className="bg-muted cursor-not-allowed"
+                  />
+                </Field>
+              </FieldGroup>
+
+              {/* the title */}
+              <FieldGroup>
+                <Field>
+                  <FieldLabel htmlFor="title">
+                    {t("profile.organization.title")}
                   </FieldLabel>
                   <Textarea
-                    id="ResidenceDetails"
-                    value=". . ."
+                    id="title"
+                    value=""
                     readOnly
                     className="bg-muted cursor-not-allowed"
                   />
                 </Field>
               </FieldGroup>
 
-              {/* residenceValidity */}
+              {/* mail */}
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="residenceValidity">
-                    {t("profile.individual.residenceValidity")}
+                  <FieldLabel htmlFor="mail">
+                    {t("profile.organization.mail")}
                   </FieldLabel>
                   <Input
-                    id="residenceValidity"
-                    value="13/12/2025"
+                    id="mail"
+                    value=""
                     readOnly
                     className="bg-muted cursor-not-allowed"
                   />
                 </Field>
               </FieldGroup>
 
-              {/* residenceValidity */}
+              {/* signature */}
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="residenceValidity">
-                    {t("profile.individual.residenceValidity")}
+                  <FieldLabel htmlFor="signature">
+                    {t("profile.organization.signature")}
                   </FieldLabel>
                   <Input
-                    id="residenceValidity"
-                    value="13/12/2025"
+                    id="signature"
+                    value=""
                     readOnly
                     className="bg-muted cursor-not-allowed"
                   />
                 </Field>
               </FieldGroup>
-
-              {/* Buttons */}
-              <div className="flex gap-5">
-                <Button className="px-10">
-                  {t("profile.individual.edit")}
-                </Button>
-                <Button className="px-10 bg-green-700 hover:bg-green-600">
-                  {t("profile.individual.service")}
-                </Button>
-              </div>
             </FieldGroup>
           </form>
         </CardContent>
+        {/* Buttons */}
+        <CardFooter className="flex gap-5">
+          <Button className="px-5 sm:px-10">
+            {t("profile.individual.edit")}
+          </Button>
+          <Button
+            className="px-5 sm:px-10 bg-green-700 hover:bg-green-600"
+            onClick={handeleServiceBtn}
+          >
+            {t("profile.individual.service")}
+          </Button>
+        </CardFooter>
       </Card>
     </div>
   );

@@ -1,12 +1,13 @@
 {
-  "appName": "MOY Platform",
+  "appName": "Jordanian Ministry of Youth",
   "nav": {
     "home": "Home",
     "about": "About us",
     "contact": "Contact"
   },
   "footer": {
-    "name": "Footer"
+    "name": "Footer",
+    "rights": "All rights reserved"
   },
   "auth": {
     "nationalId": "National / Personal ID",
@@ -62,7 +63,13 @@
       "service": "View Services"
     },
     "organization": {
-      "account": "Organization account"
+      "account": "Organization account",
+      "commercial": "Commercial Name",
+      "type": "Organization Type",
+      "capital": "Company Capital",
+      "title": "The Title",
+      "mail": "Official mail",
+      "signature": "Name of the authorized signatory "
     }
   },
   "reservation": {
@@ -97,7 +104,7 @@
       "participantsInfo": "Details about participants (ages, categories, etc.)"
     },
     "actions": {
-      "submit": "Submit reservation request!"
+      "submit": "Submit reservation request"
     },
     "options": {
       "service": {
