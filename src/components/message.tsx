@@ -50,7 +50,10 @@ export default function Message({
 
         {/* Buttons */}
         <CardFooter className="flex justify-center items-center gap-5">
-          <Button className="px-5 sm:px-10 flex-1">
+          <Button
+            className="px-5 sm:px-10 flex-1"
+            onClick={() => navigate("/Service-Requests")}
+          >
             {t("confirmationMassage.showApplications")}
           </Button>
           <Button

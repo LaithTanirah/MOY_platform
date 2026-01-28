@@ -4,6 +4,12 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+type servicesType = {
+  title: string;
+  desc: string;
+  action: () => void;
+};
+
 export default function ServiceSelector({
   className,
   ...props
@@ -14,7 +20,7 @@ export default function ServiceSelector({
   const isRtl = i18n.language?.toLowerCase().startsWith("ar");
   const Arrow = isRtl ? ChevronLeft : ChevronRight;
 
-  const services = [
+  const services: servicesType[] = [
     {
       title: t("services.cards.youthHouse.title"),
       desc: t("services.cards.youthHouse.desc"),
