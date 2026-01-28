@@ -315,12 +315,12 @@ export default function ServiceRequests({
   return (
     <div
       className={cn(
-        "flex min-h-svh w-full items-start justify-center p-4 md:p-8 bg-[#F5F7FB]",
+        "flex min-h-svh w-full items-start justify-center p-4 md:p-8",
         className,
       )}
       {...props}
     >
-      <div className="w-full max-w-6xl rounded-2xl overflow-hidden shadow-lg border bg-background">
+      <div className="w-full max-w-7xl rounded-2xl overflow-hidden shadow-lg border bg-background">
         {/* HEADER */}
         <div className="bg-primary text-white w-full">
           <div className="flex items-center gap-4 px-8 py-6">
@@ -340,9 +340,12 @@ export default function ServiceRequests({
         </div>
 
         {/* BODY */}
-        <div className="p-4 md:p-8 space-y-4 bg-[#F5F7FB]">
+        <div className="p-4 md:p-8 space-y-4 bg-slate-100 dark:bg-slate-900">
           {items.map((item) => (
-            <div key={item.id} className="rounded-xl bg-white border shadow-sm">
+            <div
+              key={item.id}
+              className="rounded-xl bg-white dark:bg-slate-800 border shadow-sm"
+            >
               <div className="p-5 md:p-6">
                 <div className="flex items-start justify-between gap-6">
                   <div className="min-w-0 text-start">

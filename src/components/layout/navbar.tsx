@@ -14,8 +14,8 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="w-full shadow-md bg-slate/100/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-700 px-6 py-3 h-20">
-      <div className="flex items-center justify-between">
+    <nav className="w-full min-h-fit shadow-md bg-slate/100/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-700 px-6 py-3 h-20">
+      <div className="flex items-center justify-between flex-wrap content-between gap-y-5">
         {/* left */}
         <div className="flex items-center space-x-3">
           <Hotel className="size-10 text-primary relative top-1" />
@@ -29,10 +29,10 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="w-px h-6 bg-gray-300"></div>
+        <div className="w-px h-6 bg-gray-300 hidden md:flex"></div>
 
         {/* center */}
-        <div className="hidden sm:flex space-x-6">
+        <div className="flex space-x-6 ">
           <Link to="/">
             <p className="hover:underline hover:decoration-primary hover:decoration-2 font-medium">
               {t("nav.home")}
