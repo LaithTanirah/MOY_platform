@@ -39,7 +39,7 @@ export default function OrganizationForm({
       </div>
 
       {/* FORM */}
-      <Card className="rounded-none shadow-none">
+      <Card className="rounded-none shadow-none dark:bg-slate-900">
         <CardContent className="p-6">
           <form>
             <FieldGroup>

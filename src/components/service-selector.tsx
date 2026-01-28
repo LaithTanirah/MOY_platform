@@ -47,7 +47,7 @@ export default function ServiceSelector({
         </div>
 
         {/* BODY */}
-        <div className="px-6 md:px-10 py-6 md:py-8 space-y-6 ">
+        <div className="px-6 md:px-10 py-6 md:py-8 space-y-6 dark:bg-slate-900">
           {/* ABOUT */}
           <div>
             <h2 className="text-sm md:text-base font-semibold text-foreground">
@@ -100,7 +100,7 @@ export default function ServiceSelector({
             ))}
 
             {/* OTHER SERVICES */}
-            <div className="w-full rounded-xl border border-border bg-background px-4 md:px-6 py-4 md:py-5 flex items-center justify-between gap-4 opacity-70">
+            <div className="w-full rounded-xl border border-border bg-muted px-4 md:px-6 py-4 md:py-5 flex items-center justify-between gap-4 opacity-70">
               <div className="min-w-0">
                 <div className="text-sm md:text-base font-semibold text-foreground">
                   {t("services.cards.other.title")}
