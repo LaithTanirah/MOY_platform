@@ -95,7 +95,7 @@
       "requiredChalets": "Required chalets *",
       "activityPlan": "Activity plan *",
       "groupLeader": "Group leader *",
-      "participantsInfo": "Participants classification"
+      "participantsInfo": "Participants classification *"
     },
     "placeholders": {
       "select": "Select...",
@@ -140,6 +140,16 @@
         "desc": "More services coming soon"
       }
     }
+  },
+  "confirmationMassage": {
+    "title": "Your request has been successfully received!",
+    "desc": "Thank you for using the Youth Hostel Booking Service",
+    "nextSteps": "Next steps:",
+    "step1": "Your request will be reviewed by the youth hostel supervisors",
+    "step2": "You will be notified once the service price is determined",
+    "step3": "You can track the status of your request through the \"Service Requests\" page",
+    "newReservation": "New Reservation",
+    "showApplications": "Show My Applications"
   },
   "requests": {
     "pageTitle": "Service Requests",

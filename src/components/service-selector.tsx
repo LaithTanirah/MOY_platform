@@ -4,6 +4,12 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+type servicesType = {
+  title: string;
+  desc: string;
+  action: () => void;
+};
+
 export default function ServiceSelector({
   className,
   ...props
@@ -14,6 +20,14 @@ export default function ServiceSelector({
   const isRtl = i18n.language?.toLowerCase().startsWith("ar");
   const Arrow = isRtl ? ChevronLeft : ChevronRight;
 
+  const services: servicesType[] = [
+    {
+      title: t("services.cards.youthHouse.title"),
+      desc: t("services.cards.youthHouse.desc"),
+      action: () => navigate("/reservation"),
+    },
+  ];
+
   return (
     <div
       className={cn(
@@ -22,7 +36,7 @@ export default function ServiceSelector({
       )}
       {...props}
     >
-      <Card className="w-full max-w-5xl rounded-2xl shadow-lg overflow-hidden p-0 bg-background">
+      <Card className="w-full max-w-5xl rounded-2xl shadow-lg overflow-hidden p-0">
         <div className="bg-primary text-white text-center px-6 md:px-10 py-10 md:py-12 rounded-t-2xl">
           <h1 className="text-2xl md:text-3xl font-bold">
             {t("services.pageTitle")}
@@ -53,35 +67,37 @@ export default function ServiceSelector({
             </h3>
 
             {/* MAIN SERVICE */}
-            <button
-              type="button"
-              onClick={() => navigate("/reservation")}
-              className={cn(
-                "w-full rounded-xl border border-border",
-                "bg-primary/10 hover:bg-primary/15 transition-colors",
-                "px-4 md:px-6 py-4 md:py-5",
-                "flex items-center justify-between gap-4",
-              )}
-            >
-              <div
+            {services.map((service) => (
+              <button
+                type="button"
+                onClick={service.action}
                 className={cn(
-                  "flex-1 min-w-0",
-                  isRtl ? "text-right" : "text-left",
+                  "w-full rounded-xl border border-border",
+                  "bg-primary/10 hover:bg-primary/15 transition-colors",
+                  "px-4 md:px-6 py-4 md:py-5",
+                  "flex items-center justify-between gap-4",
                 )}
-                dir={isRtl ? "rtl" : "ltr"}
               >
-                <div className="text-sm md:text-base font-semibold text-foreground">
-                  {t("services.cards.youthHouse.title")}
+                <div
+                  className={cn(
+                    "flex-1 min-w-0",
+                    isRtl ? "text-right" : "text-left",
+                  )}
+                  dir={isRtl ? "rtl" : "ltr"}
+                >
+                  <div className="text-sm md:text-base font-semibold text-foreground">
+                    {service.title}
+                  </div>
+                  <div className="mt-1 text-xs md:text-sm text-primary/90">
+                    {service.desc}
+                  </div>
                 </div>
-                <div className="mt-1 text-xs md:text-sm text-primary/90">
-                  {t("services.cards.youthHouse.desc")}
-                </div>
-              </div>
 
-              <span className="shrink-0 inline-flex size-10 items-center justify-center rounded-full bg-white shadow-sm border">
-                <Arrow className="h-5 w-5 text-primary" />
-              </span>
-            </button>
+                <span className="shrink-0 inline-flex size-10 items-center justify-center rounded-full bg-white shadow-sm border">
+                  <Arrow className="h-5 w-5 text-primary" />
+                </span>
+              </button>
+            ))}
 
             {/* OTHER SERVICES */}
             <div className="w-full rounded-xl border border-border bg-background px-4 md:px-6 py-4 md:py-5 flex items-center justify-between gap-4 opacity-70">

@@ -1,13 +1,14 @@
 // src/components/reservation-form.tsx
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CalendarDays, Users, Building2, ClipboardList } from "lucide-react";
+import { CalendarDays, Users, Hotel } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 type Option = { value: string; label: string };
 type FacilityType = "" | "room" | "tent" | "suite" | "chalet";
@@ -68,6 +69,7 @@ export default function ReservationForm({
   ...props
 }: React.ComponentProps<"div">) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [serviceType, setServiceType] = useState("");
   const [house, setHouse] = useState("");
@@ -178,6 +180,7 @@ export default function ReservationForm({
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    navigate("/confirmation-message");
   }
 
   return (
@@ -186,10 +189,10 @@ export default function ReservationForm({
       {...props}
     >
       {/* HEADER */}
-      <div className="flex items-center justify-between bg-primary text-white px-8 pt-6 pb-4">
+      <div className="flex items-center justify-between bg-primary text-white px-8 pt-6 pb-6">
         <div className="flex items-center gap-4">
-          <div className="flex size-14 items-center justify-center rounded-full bg-white/20">
-            <ClipboardList className="h-7 w-7" />
+          <div className="flex size-15 items-center justify-center rounded-full bg-white/20">
+            <Hotel className="h-8 w-8" />
           </div>
           <div>
             <h1 className="text-2xl font-bold">{t("reservation.title")}</h1>
@@ -197,10 +200,6 @@ export default function ReservationForm({
               {t("reservation.subtitle")}
             </p>
           </div>
-        </div>
-
-        <div className="flex size-12 items-center justify-center rounded-full bg-white/20">
-          <Building2 className="h-6 w-6" />
         </div>
       </div>
 
@@ -318,8 +317,6 @@ export default function ReservationForm({
               {/* SECTION: Facility */}
               {showFacilitySection && (
                 <>
-                  <hr />
-
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Users className="h-5 w-5 text-primary" />
@@ -440,18 +437,24 @@ export default function ReservationForm({
                   </FieldGroup>
                 </>
               )}
+
+              {/* Buttons */}
+              <div className="flex flex-wrap items-center gap-5">
+                <Button type="submit" className="flex-1 py-6 text-base">
+                  {t("reservation.actions.submit")}
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="px-10"
+                  onClick={() => navigate(-1)}
+                >
+                  {t("common.cancel")}
+                </Button>
+              </div>
             </FieldGroup>
           </form>
         </CardContent>
-        {/* Buttons */}
-        <CardFooter className="flex flex-wrap items-center gap-5">
-          <Button type="submit" className="flex-1 py-6 text-base">
-            {t("reservation.actions.submit")}
-          </Button>
-          <Button type="button" variant="secondary" className="px-10">
-            {t("common.cancel")}
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );
