@@ -205,7 +205,9 @@ export default function YouthHouse({
             <Hotel className="h-8 w-8" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">{t("reservation.title")}</h1>
+            <h1 className="text-2xl font-bold">
+              {t("reservation.youthHouse.title")}
+            </h1>
             <p className="mt-1 text-sm opacity-90">
               {t("reservation.subtitle")}
             </p>

@@ -11,8 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 type Option = { value: string; label: string };
-// type FacilityType = "" | "room" | "tent" | "suite" | "chalet" | "bed";
-type compleType = "" | "youthouse" | "sportComplex";
+type compleType = "" | "youthCenter" | "sportComplex";
 
 function Select({
   id,
@@ -72,45 +71,60 @@ export default function SportComplex({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [serviceType, setServiceType] = useState("");
   const [complexType, setComplexType] = useState<compleType>("");
-  const [house, setHouse] = useState("");
+  const [serviceType, setServiceType] = useState("");
+  const [facilityType, setFacilityType] = useState("");
+  const [facilitys, setFacilitys] = useState("");
+  const [center, setCenter] = useState("");
   const [complex, setComplex] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [beneficiaries, setBeneficiaries] = useState("1");
 
-  //   const [facility, setFacility] = useState<FacilityType>("");
-  //   const [availableCapacity] = useState("15");
-
-  //   const [requiredRooms, setRequiredRooms] = useState("1");
-  //   const [requiredTents, setRequiredTents] = useState("1");
-  //   const [requiredSuites, setRequiredSuites] = useState("1");
-  //   const [requiredChalets, setRequiredChalets] = useState("1");
-  //   const [requiredBeds, setRequiredBeds] = useState("1");
-
   const [activityPlan, setActivityPlan] = useState("");
   const [groupLeader, setGroupLeader] = useState("");
   const [participantsInfo, setParticipantsInfo] = useState("");
 
-  //   const showFacilitySection =
-  //     serviceType === "accommodation" || serviceType === "both";
   const showActivitySection = serviceType === "activity";
-  //   const showCapacity = showFacilitySection && facility !== "";
 
   const serviceOptions: Option[] = useMemo(
     () => [
-      //   {
-      //     value: "accommodation",
-      //     label: t("reservation.options.service.accommodation"),
-      //   },
       { value: "activity", label: t("reservation.options.service.activity") },
-      //   { value: "both", label: t("reservation.options.service.both") },
     ],
     [t],
   );
 
-  const houseOptions: Option[] = useMemo(
+  const facilityTypeOptions: Option[] = useMemo(
+    () => [
+      {
+        value: "court",
+        label: t("reservation.options.ComplexFacilitys.court"),
+      },
+      { value: "hall", label: t("reservation.options.ComplexFacilitys.hall") },
+      {
+        value: "swimmingPool",
+        label: t("reservation.options.ComplexFacilitys.swimmingPool"),
+      },
+    ],
+    [t],
+  );
+
+  const facilityOptions: Option[] = useMemo(
+    () => [
+      {
+        value: "court",
+        label: t("reservation.options.ComplexFacilitys.court"),
+      },
+      { value: "hall", label: t("reservation.options.ComplexFacilitys.hall") },
+      {
+        value: "swimmingPool",
+        label: t("reservation.options.ComplexFacilitys.swimmingPool"),
+      },
+    ],
+    [t],
+  );
+
+  const centerOptions: Option[] = useMemo(
     () => [
       {
         value: "petra-wadi-musa",
@@ -125,8 +139,8 @@ export default function SportComplex({
   const complexTypeOptions: Option[] = useMemo(
     () => [
       {
-        value: "youthouse",
-        label: t("reservation.fields.youthHouse"),
+        value: "youthCenter",
+        label: t("reservation.fields.youtCenter"),
       },
       { value: "sportComplex", label: t("reservation.fields.sportsComplex") },
     ],
@@ -137,87 +151,24 @@ export default function SportComplex({
     () => [
       {
         value: "petra-wadi-musa",
-        label: t("reservation.sportsComplex.options.complex.ammanSportsCity"),
+        label: t("reservation.options.complex.ammanSportsCity"),
       },
       {
         value: "ajloun",
-        label: t("reservation.sportsComplex.options.complex.irbidSportsCity"),
+        label: t("reservation.options.complex.irbidSportsCity"),
       },
       {
         value: "aqaba",
-        label: t("reservation.sportsComplex.options.complex.aqabaSportsCity"),
+        label: t("reservation.options.complex.aqabaSportsCity"),
       },
     ],
     [t],
   );
 
-  //   const facilityOptions: Option[] = useMemo(
-  //     () => [
-  //       { value: "room", label: t("reservation.options.facility.room") },
-  //       { value: "chalet", label: t("reservation.options.facility.chalet") },
-  //       { value: "tent", label: t("reservation.options.facility.tent") },
-  //       { value: "suite", label: t("reservation.options.facility.suite") },
-  //       { value: "bed", label: t("reservation.options.facility.bed") },
-  //     ],
-  //     [t],
-  //   );
-
   const durationDays = useMemo(
     () => daysBetween(fromDate, toDate),
     [fromDate, toDate],
   );
-
-  //   const activeCountKey = useMemo(() => {
-  //     if (!showFacilitySection) return "";
-  //     if (facility === "room") return "room";
-  //     if (facility === "tent") return "tent";
-  //     if (facility === "suite") return "suite";
-  //     if (facility === "chalet") return "chalet";
-  //     if (facility === "bed") return "bed";
-  //     return "";
-  //   }, [facility, showFacilitySection]);
-
-  //   const activeCountLabel = useMemo(() => {
-  //     if (activeCountKey === "room") return t("reservation.fields.requiredRooms");
-  //     if (activeCountKey === "tent") return t("reservation.fields.requiredTents");
-  //     if (activeCountKey === "suite")
-  //       return t("reservation.fields.requiredSuites");
-  //     if (activeCountKey === "chalet")
-  //       return t("reservation.fields.requiredChalets");
-  //     if (activeCountKey === "bed") return t("reservation.fields.requiredBeds");
-  //     return "";
-  //   }, [activeCountKey, t]);
-
-  //   const activeCountValue = useMemo(() => {
-  //     if (activeCountKey === "room") return requiredRooms;
-  //     if (activeCountKey === "tent") return requiredTents;
-  //     if (activeCountKey === "suite") return requiredSuites;
-  //     if (activeCountKey === "chalet") return requiredChalets;
-  //     if (activeCountKey === "bed") return requiredBeds;
-  //     return "";
-  //   }, [
-  //     activeCountKey,
-  //     requiredRooms,
-  //     requiredTents,
-  //     requiredSuites,
-  //     requiredChalets,
-  //     requiredBeds,
-  //   ]);
-
-  //   function setActiveCountValue(v: string) {
-  //     if (activeCountKey === "room") setRequiredRooms(v);
-  //     else if (activeCountKey === "tent") setRequiredTents(v);
-  //     else if (activeCountKey === "suite") setRequiredSuites(v);
-  //     else if (activeCountKey === "chalet") setRequiredChalets(v);
-  //     else if (activeCountKey === "bed") setRequiredBeds(v);
-  //   }
-
-  //   function resetFacilityCounts() {
-  //     setRequiredRooms("1");
-  //     setRequiredTents("1");
-  //     setRequiredSuites("1");
-  //     setRequiredChalets("1");
-  //   }
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -240,7 +191,7 @@ export default function SportComplex({
               {t("reservation.sportsComplex.title")}
             </h1>
             <p className="mt-1 text-sm opacity-90">
-              {t("reservation.sportsComplex.subtitle")}
+              {t("reservation.subtitle")}
             </p>
           </div>
         </div>
@@ -265,7 +216,7 @@ export default function SportComplex({
                 {/* complex type */}
                 <Field>
                   <FieldLabel htmlFor="complexType">
-                    {t("reservation.sportsComplex.fields.complexType")}{" "}
+                    {t("reservation.fields.complexType")}{" "}
                     <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Select
@@ -288,10 +239,6 @@ export default function SportComplex({
                     value={serviceType}
                     onChange={(v) => {
                       setServiceType(v);
-                      //   if (v !== "accommodation") {
-                      //     setFacility("");
-                      //     resetFacilityCounts();
-                      //   }
                     }}
                     options={serviceOptions}
                     placeholder={t("reservation.placeholders.select")}
@@ -301,17 +248,17 @@ export default function SportComplex({
 
               {/* complex type */}
               <FieldGroup>
-                {complexType === "youthouse" && (
+                {complexType === "youthCenter" && (
                   <Field>
-                    <FieldLabel htmlFor="house">
-                      {t("reservation.fields.youthHouse")}{" "}
+                    <FieldLabel htmlFor="center">
+                      {t("reservation.fields.youtCenter")}{" "}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Select
-                      id="house"
-                      value={house}
-                      onChange={setHouse}
-                      options={houseOptions}
+                      id="center"
+                      value={center}
+                      onChange={setCenter}
+                      options={centerOptions}
                       placeholder={t("reservation.placeholders.select")}
                     />
                   </Field>
@@ -320,7 +267,7 @@ export default function SportComplex({
                 {complexType === "sportComplex" && (
                   <Field>
                     <FieldLabel htmlFor="sportComplex">
-                      {t("reservation.sportsComplex.fields.sportsComplex")}{" "}
+                      {t("reservation.fields.sportsComplex")}{" "}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Select
@@ -334,7 +281,42 @@ export default function SportComplex({
                 )}
               </FieldGroup>
 
-              {/* Second row */}
+              {/* second row */}
+              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* facilitys type */}
+                <Field>
+                  <FieldLabel htmlFor="facilityType">
+                    {t("reservation.fields.facilityType")}{" "}
+                    <span className="text-red-500">*</span>
+                  </FieldLabel>
+                  <Select
+                    id="facilityType"
+                    value={facilityType}
+                    onChange={(v) => setFacilityType(v)}
+                    options={facilityTypeOptions}
+                    placeholder={t("reservation.placeholders.select")}
+                  />
+                </Field>
+
+                {/* facilitys */}
+                <Field>
+                  <FieldLabel htmlFor="facilitys">
+                    {t("reservation.fields.facilitys")}{" "}
+                    <span className="text-red-500">*</span>
+                  </FieldLabel>
+                  <Select
+                    id="facilitys"
+                    value={facilitys}
+                    onChange={(v) => {
+                      setFacilitys(v);
+                    }}
+                    options={facilityOptions}
+                    placeholder={t("reservation.placeholders.select")}
+                  />
+                </Field>
+              </FieldGroup>
+
+              {/* third row */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Field>
                   <FieldLabel htmlFor="fromDate">
@@ -377,7 +359,7 @@ export default function SportComplex({
                 </Field>
               </FieldGroup>
 
-              {/* Third row */}
+              {/* 4th row */}
               <FieldGroup>
                 <Field>
                   <FieldLabel htmlFor="beneficiaries">
@@ -394,74 +376,6 @@ export default function SportComplex({
                   />
                 </Field>
               </FieldGroup>
-
-              {/* SECTION: Facility */}
-              {/* {showFacilitySection && (
-                <>
-                  <hr className="border-border" />
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Users className="h-5 w-5 text-primary" />
-                      <h2 className="text-lg font-semibold">
-                        {t("reservation.sections.facility")}
-                      </h2>
-                    </div>
-                  </div>
-
-                  <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Field>
-                      <FieldLabel htmlFor="facility">
-                        {t("reservation.fields.facilityType")}{" "}
-                        <span className="text-red-500">*</span>
-                      </FieldLabel>
-                      <Select
-                        id="facility"
-                        value={facility}
-                        onChange={(v) => {
-                          const fv = v as FacilityType;
-                          setFacility(fv);
-                          if (!fv) resetFacilityCounts();
-                        }}
-                        options={facilityOptions}
-                        placeholder={t("reservation.placeholders.select")}
-                      />
-                    </Field>
-
-                    {showCapacity && (
-                      <Field>
-                        <FieldLabel htmlFor="availableCapacity">
-                          {t("reservation.fields.availableCapacity")}
-                        </FieldLabel>
-                        <Input
-                          id="availableCapacity"
-                          value={availableCapacity}
-                          readOnly
-                          className="bg-muted cursor-not-allowed"
-                        />
-                      </Field>
-                    )}
-                  </FieldGroup>
-
-                  {activeCountKey !== "" && (
-                    <FieldGroup>
-                      <Field>
-                        <FieldLabel htmlFor="requiredCount">
-                          {activeCountLabel}{" "}
-                          <span className="text-red-500">*</span>
-                        </FieldLabel>
-                        <Input
-                          id="requiredCount"
-                          type="number"
-                          min={1}
-                          value={activeCountValue}
-                          onChange={(e) => setActiveCountValue(e.target.value)}
-                          required
-                        />
-                      </Field>
-                    </FieldGroup>
-                  )}
-                </>
-              )} */}
 
               {/* SECTION: Activity */}
               {showActivitySection && (

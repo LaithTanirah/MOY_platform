@@ -91,7 +91,12 @@
     }
   },
   "reservation": {
-    "title": "Youth House Booking & Rental",
+    "youthHouse": {
+      "title": "Youth House & Camps Booking & Rental"
+    },
+    "sportsComplex": {
+      "title": "Sports Complex Booking & Rental"
+    },
     "subtitle": "Fill the form below to complete the reservation request",
     "sections": {
       "booking": "Booking Details",
@@ -102,11 +107,14 @@
       "serviceType": "Service type",
       "youthHouse": "Youth house",
       "sportsComplex": "Sports Complex",
+      "complexType": "Complex Type",
+      "youtCenter": "Youth Center",
       "fromDate": "From date",
       "toDate": "To date",
       "durationDays": "Duration (days)",
       "beneficiaries": "Number of companions",
-      "facilityType": "Facility",
+      "facilityType": "Facility type",
+      "facilitys": "Facilitys",
       "availableCapacity": "Available capacity",
       "requiredRooms": "Required rooms",
       "requiredTents": "Required tents",
@@ -143,26 +151,16 @@
         "suite": "Suite",
         "chalet": "Chalet",
         "bed": "Bed"
-      }
-    },
-    "sportsComplex": {
-      "title": "Sports Complex Booking & Rental",
-      "subtitle": "Fill the form below to complete the reservation request",
-      "sections": {
-        "booking": "Booking Details",
-        "facility": "Facility Details",
-        "activity": "Activity Details"
       },
-      "fields": {
-        "sportsComplex": "Sports Complex",
-        "complexType": "Complex Type"
+      "ComplexFacilitys": {
+        "court": "Court",
+        "hall": "Hall",
+        "swimmingPool": "Swimming Pool"
       },
-      "options": {
-        "complex": {
-          "ammanSportsCity": "Amman Sports City",
-          "irbidSportsCity": "Irbid Sports City",
-          "aqabaSportsCity": "Aqaba Sports City"
-        }
+      "complex": {
+        "ammanSportsCity": "Amman Sports City",
+        "irbidSportsCity": "Irbid Sports City",
+        "aqabaSportsCity": "Aqaba Sports City"
       }
     }
   },
@@ -174,12 +172,8 @@
     "availableTitle": "Available Services",
     "cards": {
       "youthHouse": {
-        "title": "Youth House Booking & Rental Service",
-        "desc": "Book accommodation at a youth house or rent a facility to host activities and events"
-      },
-      "camps": {
-        "title": "Youth Camps Booking & Rental Service",
-        "desc": "Book accommodation at a youth camp or rent a facility to host activities and events"
+        "title": "Youth House and Camps Booking & Rental Service",
+        "desc": "Book accommodation at a youth houses and camps or rent a facility to host activities and events"
       },
       "sportsComplex": {
         "title": "Sports Complex Booking & Rental Service",
