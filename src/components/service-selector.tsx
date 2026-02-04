@@ -27,11 +27,6 @@ export default function ServiceSelector({
       action: () => navigate("/youthHouse"),
     },
     {
-      title: t("services.cards.camps.title"),
-      desc: t("services.cards.camps.desc"),
-      action: () => navigate("#"),
-    },
-    {
       title: t("services.cards.sportsComplex.title"),
       desc: t("services.cards.sportsComplex.desc"),
       action: () => navigate("/sportComplex"),

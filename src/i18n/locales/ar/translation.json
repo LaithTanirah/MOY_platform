@@ -91,7 +91,12 @@
     }
   },
   "reservation": {
-    "title": "حجز وتأجير بيوت الشباب",
+    "youthHouse": {
+      "title": "حجز وتأجير بيوت و معسكرات الشباب"
+    },
+    "sportsComplex": {
+      "title": "حجز وتأجير المجمعات الرياضية"
+    },
     "subtitle": "املأ النموذج التالي لإتمام عملية الحجز",
     "sections": {
       "booking": "بيانات الحجز",
@@ -101,12 +106,15 @@
     "fields": {
       "serviceType": "نوع الخدمة",
       "youthHouse": "بيت الشباب",
-      "sportsComplex": "المجمع الرياضي",
+      "sportsComplex": "مجمع رياضي",
+      "complexType": "نوع المجمع",
+      "youtCenter": "مركز شباب",
       "fromDate": "من تاريخ",
       "toDate": "إلى تاريخ",
       "durationDays": "المدة (أيام)",
       "beneficiaries": "عدد المرافقين",
-      "facilityType": "المرفق",
+      "facilityType": "نوع المرفق",
+      "facilitys": "المرافق",
       "availableCapacity": "الطاقة الاستيعابية المتاحة",
       "requiredRooms": "عدد الغرف المطلوبة",
       "requiredTents": "عدد الخيم المطلوبة",
@@ -143,21 +151,16 @@
         "suite": "سويت",
         "chalet": "شاليه",
         "bed": "سرير"
-      }
-    },
-    "sportsComplex": {
-      "title": "حجز وتأجير المجمعات الرياضية",
-      "subtitle": "املأ النموذج التالي لإتمام عملية الحجز",
-      "fields": {
-        "complexType": "نوع المجمع",
-        "sportsComplex": "المجمع الرياضي"
       },
-      "options": {
-        "complex": {
-          "ammanSportsCity": "مدين الرياضة - عمان",
-          "irbidSportsCity": "مدينة الرياضة - إربد",
-          "aqabaSportsCity": "مدينة الرياضة - العقبة"
-        }
+      "ComplexFacilitys": {
+        "court": "ملعب",
+        "hall": "صالة",
+        "swimmingPool": "مسبح"
+      },
+      "complex": {
+        "ammanSportsCity": "مدين الرياضة - عمان",
+        "irbidSportsCity": "مدينة الرياضة - إربد",
+        "aqabaSportsCity": "مدينة الرياضة - العقبة"
       }
     }
   },
@@ -169,12 +172,8 @@
     "availableTitle": "الخدمات المتاحة",
     "cards": {
       "youthHouse": {
-        "title": "خدمة حجز وتأجير بيوت الشباب",
+        "title": "خدمة حجز وتأجير بيوت و معسكرات الشباب",
         "desc": "احجز إقامة في أحد بيوت الشباب أو استأجر مرفق لتنفيذ الأنشطة والفعاليات"
-      },
-      "camps": {
-        "title": "خدمة حجز وتأجير المخيمات الشبابية",
-        "desc": "احجز إقامة في أحد المخيمات الشبابية أو استأجر مرفق لتنفيذ الأنشطة والفعاليات"
       },
       "sportsComplex": {
         "title": "خدمة حجز وتأجير المجمعات الرياضية",
