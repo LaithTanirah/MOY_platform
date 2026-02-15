@@ -44,7 +44,9 @@
     "companySector": "قطاع المؤسسة",
     "govOrgNationalId": "رقم المؤسسة الحكومية",
     "govOrganizationName": "اسم المؤسسة الحكومية",
-    "chooseFile": "اضغط لاختيار ملف"
+    "chooseFile": "اضغط لاختيار ملف",
+    "orgNationalIdPlaceholder": "ادخل الرقم الوطني للمنشأة",
+    "passwordPlaceholder": "ادخل كلمة المرور"
   },
   "buttons": {
     "save": "حفظ",
