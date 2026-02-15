@@ -45,7 +45,9 @@
     "companySector": "Company sector",
     "govOrgNationalId": "Government Organization ID",
     "govOrganizationName": "Government Organization Name",
-    "chooseFile": "Click to upload a file"
+    "chooseFile": "Click to upload a file",
+    "orgNationalIdPlaceholder": "Enter organization national ID",
+    "passwordPlaceholder": "Enter password"
   },
   "buttons": {
     "save": "Save",
