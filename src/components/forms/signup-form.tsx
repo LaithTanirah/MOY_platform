@@ -1,3 +1,4 @@
+// imports
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,8 +13,6 @@ import { LogIn } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { useMemo, useState } from "react";
-// import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-// import { Label } from "../ui/label";
 import { z } from "zod";
 import {
   Select,
@@ -24,20 +23,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+// schema
 const formSchema = z.object({
-  orgNationalId: z.number(),
-  orgName: z.string(),
-  capacity: z.enum(["owner", "Written", "register"]),
-  nationality: z.enum(["jordanian", "non-jordanian"]),
-  commissionerID: z.number(),
+  orgNationalId: z.string().min(1),
+  orgName: z.string().min(1),
+  companySector: z.enum(["government", "private"]),
+  delegateRole: z.enum(["owner", "authorizedOnRegistry", "written"]),
+  nationality: z.enum(["jordanian", "nonJordanian"]),
+  delegateNationalId: z.string().optional(),
+  phone: z.string().min(1),
   email: z.string().email().optional(),
-  phone: z.string(),
-  commissionerFile: z.instanceof(File).optional(),
 });
+
+type FormType = z.infer<typeof formSchema>;
+type FormErrors = Partial<Record<keyof FormType, string>>;
 type Option = { value: string; label: string };
-// type companySectorType = "government" | "private";
-type formType = z.infer<typeof formSchema>;
-type FormErrors = Partial<Record<keyof formType, string>>;
 
 export default function SignupForm({
   className,
@@ -45,199 +45,153 @@ export default function SignupForm({
 }: React.ComponentProps<"div">) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  // const [companySector, setCompanySector] =
-  //   useState<companySectorType>("government");
-  const [form, setForm] = useState<formType>({
-    orgNationalId: undefined,
-    orgName: undefined,
-    capacity: undefined,
-    nationality: undefined,
-    commissionerID: undefined,
-    email: undefined,
-    phone: undefined,
-    commissionerFile: undefined,
-  });
-  const [formErrors, setFormErrors] = useState<FormErrors>({});
 
-  const capacityOptions: Option[] = useMemo(
+  const [form, setForm] = useState<FormType>({
+    orgNationalId: "",
+    orgName: "",
+    companySector: "government",
+    delegateRole: "owner",
+    nationality: "jordanian",
+    delegateNationalId: "",
+    phone: "",
+    email: "",
+  });
+
+  const [errors, setErrors] = useState<FormErrors>({});
+
+  const sectorOptions: Option[] = useMemo(
     () => [
-      {
-        value: "owner",
-        label: t("reservation.options.commissionerCapicity.owner"),
-      },
-      {
-        value: "Written",
-        label: t("reservation.options.commissionerCapicity.Written"),
-      },
-      {
-        value: "register",
-        label: t("reservation.options.commissionerCapicity.register"),
-      },
+      { value: "government", label: t("auth.government") },
+      { value: "private", label: t("auth.private") },
+    ],
+    [t],
+  );
+
+  const roleOptions: Option[] = useMemo(
+    () => [
+      { value: "owner", label: t("auth.owner") },
+      { value: "authorizedOnRegistry", label: t("auth.authorizedOnRegistry") },
+      { value: "written", label: t("auth.writtenDelegate") },
     ],
     [t],
   );
 
   const nationalityOptions: Option[] = useMemo(
     () => [
-      {
-        value: "jordanian",
-        label: t("reservation.options.nationality.jordanian"),
-      },
-      {
-        value: "non-jordanian",
-        label: t("reservation.options.nationality.non-jordanian"),
-      },
+      { value: "jordanian", label: t("auth.jordanian") },
+      { value: "nonJordanian", label: t("auth.nonJordanian") },
     ],
     [t],
   );
 
-  {
-    /* submit */
-  }
-  function validate(): boolean {
+  function validate() {
     const result = formSchema.safeParse(form);
 
     if (!result.success) {
       const fieldErrors: FormErrors = {};
-
       result.error.issues.forEach((issue) => {
-        const field = issue.path[0] as keyof formType;
+        const field = issue.path[0] as keyof FormType;
         fieldErrors[field] = issue.message;
       });
-
-      setFormErrors(fieldErrors);
+      setErrors(fieldErrors);
       return false;
     }
 
-    setFormErrors({});
+    setErrors({});
     return true;
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!validate()) return;
 
-    if (!validate()) {
-      console.log(formErrors);
-      return;
-    }
-
-    try {
-      // API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log(form);
-      navigate("/organization-profile");
-    } catch (error) {
-      console.error(error);
-    }
+    console.log(form);
+    navigate("/organization-profile");
   }
 
+  const showDelegateNationalId = form.nationality === "jordanian";
+  const showWrittenAttachment = form.delegateRole === "written";
+
   return (
-    <div
-      className={cn("rounded-2xl shadow-lg overflow-hidden", className)}
-      {...props}
-    >
-      {/* HEADER */}
-      <div className="bg-primary text-white text-center px-6 pt-10 pb-8">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-white/20">
-          <LogIn className="h-6 w-6" />
+    <div className={cn("mx-auto w-full max-w-3xl px-4", className)} {...props}>
+      <div className="overflow-hidden rounded-2xl border bg-background shadow-sm">
+
+        <div className="bg-primary text-white px-6 py-7 flex gap-4 items-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20">
+            <LogIn className="h-6 w-6" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold">{t("form.gate")}</h1>
+            <p className="text-sm opacity-90">{t("form.reservation")}</p>
+          </div>
         </div>
 
-        <h1 className="text-xl font-bold">{t("form.gate")}</h1>
-        <p className="mt-1 text-sm opacity-90">{t("form.reservation")}</p>
-      </div>
+        <Card className="rounded-none shadow-none">
+          <CardContent className="p-6">
+            <form onSubmit={handleSubmit}>
+              <FieldGroup className="grid gap-4">
 
-      {/* FORM */}
-      <Card className="rounded-none shadow-none dark:bg-slate-900">
-        <CardContent className="p-6">
-          <form onSubmit={handleSubmit}>
-            <FieldGroup>
-              {/*  ID */}
-              <Field>
-                <FieldLabel htmlFor="orgNationalId">
-                  {t("auth.orgNationalId")}{" "}
-                  <span className="text-red-500">*</span>
-                </FieldLabel>
-                <Input
-                  id="orgNationalId"
-                  type="number"
-                  value={form.orgNationalId}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      orgNationalId: Number(e.target.value),
-                    }))
-                  }
-                  placeholder={t("auth.orgNationalIdPlaceholder")}
-                  required
-                />
-              </Field>
-
-              {/*  name */}
-              <Field>
-                <FieldLabel htmlFor="orgName">
-                  {t("auth.organizationName")}
-                  <span className="text-red-500">*</span>
-                </FieldLabel>
-                <Input
-                  id="orgName"
-                  value={form.orgName}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      orgName: e.target.value,
-                    }))
-                  }
-                  placeholder={t("auth.organizationNamePlaceholder")}
-                  required
-                />
-              </Field>
-
-              {/* company sector */}
-              {/* <RadioGroup
-                defaultValue="goverment"
-                onValueChange={(value) =>
-                  setCompanySector(value as companySectorType)
-                }
-                dir={t("dir")}
-              >
-                <div className="flex items-center gap-3">
-                  <RadioGroupItem value="goverment" id="goverment" />
-                  <Label htmlFor="goverment">{t("auth.government")}</Label>
-                </div>
-                <div className="flex items-center gap-3">
-                  <RadioGroupItem value="private" id="private" />
-                  <Label htmlFor="private">{t("auth.private")}</Label>
-                </div>
-              </RadioGroup> */}
-
-              {/* commissioner */}
-              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* capacity */}
+                {/* sector */}
                 <Field>
-                  <FieldLabel htmlFor="capacity">
-                    {t("auth.capacity")} <span className="text-red-500">*</span>
-                  </FieldLabel>
+                  <FieldLabel>{t("auth.companySector")} *</FieldLabel>
                   <Select
-                    value={form.capacity}
-                    onValueChange={(value) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        capacity: value as formType["capacity"],
-                      }))
+                    value={form.companySector}
+                    onValueChange={(v) =>
+                      setForm((p) => ({ ...p, companySector: v as any }))
                     }
                     dir={t("dir")}
-                    required
                   >
-                    <SelectTrigger className="w-full">
-                      <SelectValue
-                        placeholder={t("reservation.placeholders.select")}
-                      />
-                    </SelectTrigger>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        {capacityOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
+                        {sectorOptions.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+
+                {/* org id */}
+                <Field>
+                  <FieldLabel>{t("auth.orgNationalId")} *</FieldLabel>
+                  <Input
+                    value={form.orgNationalId}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, orgNationalId: e.target.value }))
+                    }
+                  />
+                </Field>
+
+                {/* org name */}
+                <Field>
+                  <FieldLabel>{t("auth.organizationName")} *</FieldLabel>
+                  <Input
+                    value={form.orgName}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, orgName: e.target.value }))
+                    }
+                  />
+                </Field>
+
+                {/* role */}
+                <Field>
+                  <FieldLabel>{t("auth.delegateRole")} *</FieldLabel>
+                  <Select
+                    value={form.delegateRole}
+                    onValueChange={(v) =>
+                      setForm((p) => ({ ...p, delegateRole: v as any }))
+                    }
+                    dir={t("dir")}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {roleOptions.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
                           </SelectItem>
                         ))}
                       </SelectGroup>
@@ -247,179 +201,85 @@ export default function SignupForm({
 
                 {/* nationality */}
                 <Field>
-                  <FieldLabel htmlFor="nationality">
-                    {t("auth.nationality")}{" "}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
+                  <FieldLabel>{t("auth.delegateNationality")} *</FieldLabel>
                   <Select
                     value={form.nationality}
-                    onValueChange={(value) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        nationality: value as formType["nationality"],
-                      }))
+                    onValueChange={(v) =>
+                      setForm((p) => ({ ...p, nationality: v as any }))
                     }
                     dir={t("dir")}
-                    required
                   >
-                    <SelectTrigger className="w-full">
-                      <SelectValue
-                        placeholder={t("reservation.placeholders.select")}
-                      />
-                    </SelectTrigger>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        {nationalityOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
+                        {nationalityOptions.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
                           </SelectItem>
                         ))}
                       </SelectGroup>
                     </SelectContent>
                   </Select>
                 </Field>
-              </FieldGroup>
 
-              {/* commissioner ID */}
-              <Field>
-                <FieldLabel htmlFor="commissionerID">
-                  {t("auth.commissionerID")}{" "}
-                  <span className="text-red-500">*</span>
-                </FieldLabel>
-                <Input
-                  id="commissionerID"
-                  type="number"
-                  value={form.commissionerID}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      commissionerID: Number(e.target.value),
-                    }))
-                  }
-                  placeholder={t("auth.commissionerIDPlaceholder")}
-                  required
-                />
-              </Field>
+                {/* delegate ID */}
+                {showDelegateNationalId && (
+                  <Field>
+                    <FieldLabel>{t("auth.delegateNationalId")} *</FieldLabel>
+                    <Input
+                      value={form.delegateNationalId}
+                      onChange={(e) =>
+                        setForm((p) => ({
+                          ...p,
+                          delegateNationalId: e.target.value,
+                        }))
+                      }
+                    />
+                  </Field>
+                )}
 
-              {/* email and pass */}
-              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* phone */}
+                <Field>
+                  <FieldLabel>{t("auth.delegatePhone")} *</FieldLabel>
+                  <Input
+                    value={form.phone}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, phone: e.target.value }))
+                    }
+                  />
+                </Field>
+
                 {/* email */}
                 <Field>
-                  <FieldLabel htmlFor="email">
-                    {t("auth.email")}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
+                  <FieldLabel>{t("auth.delegateEmail")}</FieldLabel>
                   <Input
-                    id="email"
                     type="email"
                     value={form.email}
                     onChange={(e) =>
-                      setForm((prev) => ({ ...prev, email: e.target.value }))
+                      setForm((p) => ({ ...p, email: e.target.value }))
                     }
-                    placeholder={t("auth.emailPlaceholder")}
-                    required
                   />
                 </Field>
 
-                {/* phone number */}
+                {/* submit */}
                 <Field>
-                  <FieldLabel htmlFor="phone">
-                    {t("auth.phoneNumber")}{" "}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={form.phone}
-                    onChange={(e) =>
-                      setForm((prev) => ({ ...prev, phone: e.target.value }))
-                    }
-                    placeholder={t("auth.phoneNumberPlaceholder")}
-                    required
-                  />
+                  <Button className="w-full" type="submit">
+                    {t("auth.signup")}
+                  </Button>
+
+                  <FieldDescription className="text-center mt-2">
+                    {t("auth.account")}{" "}
+                    <Link to="/login" className="text-primary hover:underline">
+                      {t("auth.login")}
+                    </Link>
+                  </FieldDescription>
                 </Field>
+
               </FieldGroup>
-
-              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* PASSWORD */}
-                <Field>
-                  <FieldLabel htmlFor="password">
-                    {t("auth.password")} <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder={t("auth.passwordPlaceholder")}
-                    required
-                  />
-                </Field>
-
-                {/* Confirm PASSWORD */}
-                <Field>
-                  <FieldLabel htmlFor="confirmPassword">
-                    {t("auth.confirmPassword")}{" "}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder={t("auth.confirmPasswordPlaceholder")}
-                    required
-                  />
-                </Field>
-              </FieldGroup>
-
-              <Field>
-                <label className="block space-y-2">
-                  <span className="text-sm font-medium block">
-                    {t("auth.file")}
-                  </span>
-
-                  <span className="flex gap-2">
-                    <Button type="button" asChild>
-                      <label>
-                        {t("profile.chooseFile")}
-                        <input
-                          type="file"
-                          className="hidden"
-                          onChange={(e) =>
-                            setForm((prev) => ({
-                              ...prev,
-                              commissionerFile: e.target.files
-                                ? e.target.files[0]
-                                : undefined,
-                            }))
-                          }
-                        />
-                      </label>
-                    </Button>
-
-                    {form.commissionerFile && (
-                      <p className="text-sm text-muted-foreground">
-                        {form.commissionerFile.name}
-                      </p>
-                    )}
-                  </span>
-                </label>
-              </Field>
-
-              {/* SUBMIT */}
-              <Field>
-                <Button className="w-full" type="submit">
-                  {t("auth.signup")}
-                </Button>
-
-                <FieldDescription className="text-center">
-                  {t("auth.account")}{" "}
-                  <Link to="/login" className="text-primary hover:underline">
-                    {t("auth.login")}
-                  </Link>
-                </FieldDescription>
-              </Field>
-            </FieldGroup>
-          </form>
-        </CardContent>
-      </Card>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
