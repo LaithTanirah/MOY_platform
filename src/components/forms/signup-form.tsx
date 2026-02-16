@@ -22,7 +22,11 @@ import {
 } from "@/components/ui/select";
 import { z } from "zod";
 
-type companySectorType = "government" | "private";
+type companySectorType =
+  | "charity"
+  | "cooperative"
+  | "sole_establishment"
+  | "company";
 type delegateRoleType = "owner" | "authorizedOnRegistry" | "written";
 type delegateNationalityType = "jordanian" | "nonJordanian";
 type Option<T extends string> = { value: T; label: string };
@@ -34,7 +38,9 @@ const formSchema = z.object({
   delegateRole: z.enum(["owner", "authorizedOnRegistry", "written"]).optional(),
   delegateNationalId: z.string().optional(),
 
-  companySector: z.enum(["government", "private"]).optional(),
+  companySector: z
+    .enum(["charity", "cooperative", "sole_establishment", "company"])
+    .optional(),
   orgNationalName: z.string().optional(),
   orgNationalId: z.string().optional(),
   orgEmail: z.string().email().optional(),
@@ -42,6 +48,8 @@ const formSchema = z.object({
   orgAddress: z.string().optional(),
 
   password: z.string().min(6).optional(),
+
+  name: z.string().optional(),
 
   file: z
     .instanceof(File)
@@ -70,7 +78,7 @@ export default function SignupForm({
     delegateRole: undefined,
     delegateNationalId: undefined,
 
-    companySector: "government",
+    companySector: undefined,
     orgNationalName: undefined,
     orgNationalId: undefined,
     orgEmail: undefined,
@@ -80,6 +88,8 @@ export default function SignupForm({
     password: undefined,
 
     file: undefined,
+
+    name: undefined,
   });
   const [formErrors, setFormErrors] = useState<FormErrors>({});
 
@@ -87,35 +97,22 @@ export default function SignupForm({
   const showWrittenAttachment = form.delegateRole === "written";
 
   // Dynamic labels based on sector
-  const orgIdLabel =
-    form.companySector === "government"
-      ? t("auth.govOrgNationalId")
-      : t("auth.orgNationalId");
+  const orgIdLabel = t("auth.orgNationalId");
 
-  const orgNameLabel =
-    form.companySector === "government"
-      ? t("auth.govOrganizationName")
-      : t("auth.organizationName");
+  const orgNameLabel = t("auth.organizationName");
 
-  const orgEmailLabel =
-    form.companySector === "government"
-      ? t("auth.govOrgEmail")
-      : t("auth.orgEmail");
+  const orgEmailLabel = t("auth.orgEmail");
 
-  const orgPhoneLabel =
-    form.companySector === "government"
-      ? t("auth.govOrgPhone")
-      : t("auth.orgPhone");
+  const orgPhoneLabel = t("auth.orgPhone");
 
-  const orgAddressLabel =
-    form.companySector === "government"
-      ? t("auth.govOrgAddress")
-      : t("auth.orgAddress");
+  const orgAddressLabel = t("auth.orgAddress");
 
   const sectorOptions: Option<companySectorType>[] = useMemo(
     () => [
-      { value: "government", label: t("auth.government") },
-      { value: "private", label: t("auth.private") },
+      { value: "charity", label: t("auth.charity") },
+      { value: "cooperative", label: t("auth.cooperative") },
+      { value: "sole_establishment", label: t("auth.sole_establishment") },
+      { value: "company", label: t("auth.company") },
     ],
     [t],
   );
@@ -344,6 +341,27 @@ export default function SignupForm({
 
                 {/* Divider */}
                 <hr className="border-primary" />
+                {/* Name */}
+                <Field>
+                  <FieldLabel htmlFor="Name">
+                    {t("auth.Name")} <span className="text-red-500">*</span>
+                  </FieldLabel>
+                  <Input
+                    id="Name"
+                    type="text"
+                    value={form.name}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        name: e.target.value,
+                      }))
+                    }
+                    required
+                  />
+                  {formErrors.name && (
+                    <p className="text-red-500">{formErrors.name}</p>
+                  )}
+                </Field>
 
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Delegate Role */}
