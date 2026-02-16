@@ -189,7 +189,12 @@ export default function SportComplex({
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    navigate("/confirmation-message");
+    navigate("/confirmation-message", {
+      state: {
+        descKey: "confirmationMassage.descForsportComplex",
+        step1Key: "confirmationMassage.step1ForsportComplex",
+      },
+    });
   }
 
   return (

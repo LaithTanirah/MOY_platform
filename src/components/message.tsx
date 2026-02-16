@@ -8,7 +8,12 @@ import {
 } from "@/components/ui/card";
 import { CalendarDays } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+
+type ConfirmState = {
+  descKey?: string;
+  step1Key?: string;
+};
 
 export default function Message({
   className,
@@ -16,6 +21,11 @@ export default function Message({
 }: React.ComponentProps<"div">) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const state = (location.state as ConfirmState) || {};
+  const descKey = state.descKey ?? "confirmationMassage.descForYouthHouse";
+  const step1Key = state.step1Key ?? "confirmationMassage.step1ForYouthHouse";
 
   return (
     <div
@@ -29,10 +39,11 @@ export default function Message({
             <CalendarDays className="h-10 w-10" />
           </div>
 
-          <h1 className="text-2xl font-bold dark:">
+          <h1 className="text-2xl font-bold">
             {t("confirmationMassage.title")}
           </h1>
-          <p className="text-sm opacity-90">{t("confirmationMassage.desc")}</p>
+
+          <p className="text-sm opacity-90">{t(descKey)}</p>
         </CardHeader>
 
         <CardContent className="px-6 py-1">
@@ -40,8 +51,9 @@ export default function Message({
             <h3 className="mb-2 text-sm font-bold px-1 dark:text-blue-400">
               {t("confirmationMassage.nextSteps")}
             </h3>
+
             <ul className="list-disc space-y-1 px-5 text-sm">
-              <li>{t("confirmationMassage.step1")}</li>
+              <li>{t(step1Key)}</li>
               <li>{t("confirmationMassage.step2")}</li>
               <li>{t("confirmationMassage.step3")}</li>
             </ul>
@@ -56,6 +68,7 @@ export default function Message({
           >
             {t("confirmationMassage.showApplications")}
           </Button>
+
           <Button
             className="px-5 sm:px-10 bg-green-500 hover:bg-green-400 flex-1"
             onClick={() => navigate("/services")}
