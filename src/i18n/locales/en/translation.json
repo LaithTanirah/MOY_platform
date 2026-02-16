@@ -56,6 +56,12 @@
     "orgAddress": "Organization Address",
     "govOrgAddress": "Government Organization Address",
     "sanadSignOn": "Single sign-on"
+    "passwordPlaceholder": "Enter password"
+    "commissionerID": "Commissioner national ID",
+    "commissionerIDPlaceholder": "Enter the national ID",
+    "email": "Commissioner Email",
+    "emailPlaceholder": "Enter the email",
+    "file": "Upload the delegation"
   },
   "buttons": {
     "save": "Save",
