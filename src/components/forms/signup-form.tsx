@@ -32,37 +32,51 @@ type delegateRoleType = "owner" | "authorizedOnRegistry" | "written";
 type delegateNationalityType = "jordanian" | "nonJordanian";
 type Option<T extends string> = { value: T; label: string };
 
-const formSchema = z.object({
-  delegateName: z.string().optional(),
-  delegatePhone: z.string().optional(),
-  delegateEmail: z.string().email().optional(),
-  delegateNationality: z.enum(["jordanian", "nonJordanian"]).optional(),
-  delegateRole: z.enum(["owner", "authorizedOnRegistry", "written"]).optional(),
-  delegateNationalId: z.string().optional(),
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const formSchema = (t: any) =>
+  z.object({
+    delegateName: z.string().min(1, t("errors.required")),
+    delegatePhone: z
+      .string()
+      .length(9, t("errors.length", { len: 9 }))
+      .regex(/^\d*$/, t("errors.digitsOnly")),
+    delegateEmail: z.string().email(t("errors.invalidEmail")),
+    delegateNationality: z.enum(["jordanian", "nonJordanian"]),
+    delegateRole: z
+      .enum(["owner", "authorizedOnRegistry", "written"])
+      .optional(),
+    delegateNationalId: z
+      .string()
+      .length(10, t("errors.length", { len: 10 }))
+      .regex(/^\d*$/, t("errors.digitsOnly")),
 
-  companySector: z
-    .enum(["charity", "cooperative", "sole_establishment", "company"])
-    .optional(),
-  orgNationalName: z.string().optional(),
-  orgNationalId: z.string().optional(),
-  orgEmail: z.string().email().optional(),
-  orgPhone: z.string().optional(),
-  orgAddress: z.string().optional(),
+    companySector: z
+      .enum(["charity", "cooperative", "sole_establishment", "company"])
+      .optional(),
+    orgNationalName: z.string().min(1, t("errors.required")),
+    orgNationalId: z
+      .string()
+      .length(10, t("errors.length", { len: 10 }))
+      .regex(/^\d*$/, t("errors.digitsOnly")),
+    orgEmail: z.string().email(t("errors.invalidEmail")),
+    orgPhone: z
+      .string()
+      .length(9, t("errors.length", { len: 9 }))
+      .regex(/^\d*$/, t("errors.digitsOnly")),
+    orgAddress: z.string().min(1, t("errors.required")),
 
-  password: z.string().min(6).optional(),
+    password: z.string().min(6, t("errors.min", { len: 6 })),
 
-  file: z
-    .instanceof(File)
-    .refine((file) => file.size <= 5_000_000, "Max size is 5MB")
-    .refine(
-      (file) =>
-        ["image/png", "image/jpeg", "application/pdf"].includes(file.type),
-      "Only PNG, JPG, JPEG, or PDF files are allowed",
-    )
-    .optional(),
-});
-type formType = z.infer<typeof formSchema>;
-type FormErrors = Partial<Record<keyof formType, string>>;
+    file: z
+      .instanceof(File)
+      .refine((file) => file.size <= 5_000_000, "Max size is 5MB")
+      .refine(
+        (file) =>
+          ["image/png", "image/jpeg", "application/pdf"].includes(file.type),
+        "Only PNG, JPG, JPEG, or PDF files are allowed",
+      )
+      .optional(),
+  });
 
 export default function SignupForm({
   className,
@@ -70,23 +84,26 @@ export default function SignupForm({
 }: React.ComponentProps<"div">) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const schema = formSchema(t);
+  type formType = z.infer<typeof schema>;
+  type FormErrors = Partial<Record<keyof formType, string>>;
 
   const [form, setForm] = useState<formType>({
-    delegateName: undefined,
-    delegatePhone: undefined,
-    delegateEmail: undefined,
+    delegateName: "",
+    delegatePhone: "",
+    delegateEmail: "",
     delegateNationality: "jordanian",
-    delegateRole: undefined,
-    delegateNationalId: undefined,
+    delegateRole: "written",
+    delegateNationalId: "",
 
     companySector: undefined,
-    orgNationalName: undefined,
-    orgNationalId: undefined,
-    orgEmail: undefined,
-    orgPhone: undefined,
-    orgAddress: undefined,
+    orgNationalName: "",
+    orgNationalId: "",
+    orgEmail: "",
+    orgPhone: "",
+    orgAddress: "",
 
-    password: undefined,
+    password: "",
 
     file: undefined,
   });
@@ -134,7 +151,7 @@ export default function SignupForm({
   const formatPhone = (num: string | undefined) => `+962${num}`;
 
   function validate(): boolean {
-    const result = formSchema.safeParse(form);
+    const result = schema.safeParse(form);
 
     if (!result.success) {
       const fieldErrors: FormErrors = {};
@@ -162,7 +179,7 @@ export default function SignupForm({
     if (form.file === undefined && showWrittenAttachment) {
       setFormErrors((prev) => ({
         ...prev,
-        file: t("auth.required"),
+        file: t("errors.required"),
       }));
       return;
     }
@@ -220,7 +237,7 @@ export default function SignupForm({
                       setForm((prev) => ({
                         ...prev,
                         companySector: value as companySectorType,
-                        delegateRole: undefined,
+                        delegateRole: "written",
                       }))
                     }
                     dir={t("dir")}
@@ -260,8 +277,8 @@ export default function SignupForm({
                           orgNationalName: e.target.value,
                         }))
                       }
-                      required
                     />
+                    <FieldError>{formErrors.orgNationalName}</FieldError>
                   </Field>
 
                   {/* Organization National ID */}
@@ -272,7 +289,7 @@ export default function SignupForm({
                     </FieldLabel>
                     <Input
                       id="orgNationalId"
-                      type="number"
+                      type="text"
                       value={form.orgNationalId}
                       onChange={(e) =>
                         setForm((prev) => ({
@@ -280,8 +297,9 @@ export default function SignupForm({
                           orgNationalId: e.target.value,
                         }))
                       }
-                      required
+                      maxLength={10}
                     />
+                    <FieldError>{formErrors.orgNationalId}</FieldError>
                   </Field>
                 </FieldGroup>
 
@@ -302,11 +320,8 @@ export default function SignupForm({
                           orgEmail: e.target.value,
                         }))
                       }
-                      required
                     />
-                    {formErrors.orgEmail && (
-                      <p className="text-red-500">{formErrors.orgEmail}</p>
-                    )}
+                    <FieldError>{formErrors.orgEmail}</FieldError>
                   </Field>
 
                   {/* Phone */}
@@ -331,12 +346,9 @@ export default function SignupForm({
                         }
                         maxLength={9}
                         placeholder="7XXXXXXXX"
-                        required
                       />
                     </div>
-                    {formErrors.orgPhone && (
-                      <p className="text-red-500">{formErrors.orgPhone}</p>
-                    )}
+                    <FieldError>{formErrors.orgPhone}</FieldError>
                   </Field>
                 </FieldGroup>
 
@@ -356,8 +368,8 @@ export default function SignupForm({
                         orgAddress: e.target.value,
                       }))
                     }
-                    required
                   />
+                  <FieldError>{formErrors.orgAddress}</FieldError>
                 </Field>
 
                 {/* Divider */}
@@ -379,11 +391,8 @@ export default function SignupForm({
                         delegateName: e.target.value,
                       }))
                     }
-                    required
                   />
-                  {formErrors.delegateName && (
-                    <p className="text-red-500">{formErrors.delegateName}</p>
-                  )}
+                  <FieldError>{formErrors.delegateName}</FieldError>
                 </Field>
 
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -473,7 +482,7 @@ export default function SignupForm({
                   </FieldLabel>
                   <Input
                     id="delegateNationalId"
-                    type="number"
+                    type="text"
                     value={form.delegateNationalId}
                     onChange={(e) =>
                       setForm((prev) => ({
@@ -481,8 +490,9 @@ export default function SignupForm({
                         delegateNationalId: e.target.value,
                       }))
                     }
-                    required
+                    maxLength={10}
                   />
+                  <FieldError>{formErrors.delegateNationalId}</FieldError>
                 </Field>
 
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -503,13 +513,8 @@ export default function SignupForm({
                             delegateEmail: e.target.value,
                           }))
                         }
-                        required
                       />
-                      {formErrors.delegateEmail && (
-                        <p className="text-red-500">
-                          {formErrors.delegateEmail}
-                        </p>
-                      )}
+                      <FieldError>{formErrors.delegateEmail}</FieldError>
                     </Field>
                   </FieldGroup>
 
@@ -536,12 +541,9 @@ export default function SignupForm({
                           }
                           maxLength={9}
                           placeholder="7XXXXXXXX"
-                          required
                         />
                       </div>
-                      {formErrors.delegatePhone && (
-                        <FieldError>{formErrors.delegatePhone}</FieldError>
-                      )}
+                      <FieldError>{formErrors.delegatePhone}</FieldError>
                     </Field>
                   </FieldGroup>
                 </FieldGroup>
@@ -604,9 +606,7 @@ export default function SignupForm({
                       }}
                       className="hidden"
                     />
-                    {formErrors.file && (
-                      <p className="text-red-500">{formErrors.file}</p>
-                    )}
+                    <FieldError>{formErrors.file}</FieldError>
                   </Field>
                 )}
 
@@ -625,11 +625,8 @@ export default function SignupForm({
                         password: e.target.value,
                       }))
                     }
-                    required
                   />
-                  {formErrors.password && (
-                    <p className="text-red-500">{formErrors.password}</p>
-                  )}
+                  <FieldError>{formErrors.password}</FieldError>
                 </Field>
 
                 {/* Submit */}

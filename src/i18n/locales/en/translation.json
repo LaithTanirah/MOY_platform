@@ -55,8 +55,17 @@
     "orgAddress": "Organization Address",
     "sanadSignOn": "Single sign-on",
     "file": "Upload the delegation",
-    "delegateName": "Delegate name",
-    "required": "this Field is required"
+    "delegateName": "Delegate name"
+  },
+  "errors": {
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email address",
+    "invalidPhone": "Please enter a valid phone number",
+    "min": "This field must be at least {{len}} characters long",
+    "max": "This field must be at most {{len}} characters long",
+    "invalid": "This field is invalid",
+    "length": "This field must be exactly {{len}} characters long",
+    "digitsOnly": "This field must contain only digits"
   },
   "buttons": {
     "save": "Save",
