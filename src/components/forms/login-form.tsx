@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
@@ -14,12 +15,20 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import sanad from "@/assets/sanad.png";
 import sanadLogo from "@/assets/sanad-logo.png";
+import { z } from "zod";
 
 type UserType = "individual" | "organization";
-type formType = {
-  ID?: string;
-  password?: string;
-};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const formSchema = (t: any) =>
+  z.object({
+    ID: z
+      .string()
+      .length(10, t("errors.length", { len: 10 }))
+      .regex(/^\d*$/, t("errors.digitsOnly")),
+
+    password: z.string().min(6, t("errors.min", { len: 6 })),
+  });
 
 export function LoginForm({
   className,
@@ -28,18 +37,48 @@ export function LoginForm({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [userType, setUserType] = useState<UserType>("individual");
+
+  const schema = formSchema(t);
+  type formType = z.infer<typeof schema>;
+  type FormErrors = Partial<Record<keyof formType, string>>;
+
   const [form, setForm] = useState<formType>({
-    ID: undefined,
-    password: undefined,
+    ID: "",
+    password: "",
   });
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
 
   {
     /* Submit */
   }
+  function validate(): boolean {
+    const result = schema.safeParse(form);
+
+    if (!result.success) {
+      const fieldErrors: FormErrors = {};
+
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof formType;
+        fieldErrors[field] = issue.message;
+      });
+
+      setFormErrors(fieldErrors);
+      return false;
+    }
+
+    setFormErrors({});
+    return true;
+  }
+
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
+    if (!validate()) {
+      console.log(formErrors);
+      return;
+    }
+
     try {
-      // API call
+      // api call
       console.log(form);
       navigate("/services");
     } catch (error) {
@@ -138,14 +177,15 @@ export function LoginForm({
                 </div>
               ) : (
                 <>
+                  {/* ID */}
                   <Field>
-                    <FieldLabel htmlFor="orgNationalId">
+                    <FieldLabel htmlFor="ID">
                       {t("auth.orgNationalId")}{" "}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Input
-                      id="orgNationalId"
-                      type="number"
+                      id="ID"
+                      type="text"
                       value={form.ID}
                       onChange={(e) =>
                         setForm((prev) => ({
@@ -153,9 +193,10 @@ export function LoginForm({
                           ID: e.target.value,
                         }))
                       }
+                      maxLength={10}
                       placeholder={t("auth.orgNationalIdPlaceholder")}
-                      required
                     />
+                    <FieldError>{formErrors.ID}</FieldError>
                   </Field>
 
                   {/* PASSWORD */}
@@ -175,8 +216,8 @@ export function LoginForm({
                       }
                       type="password"
                       placeholder={t("auth.passwordPlaceholder")}
-                      required
                     />
+                    <FieldError>{formErrors.password}</FieldError>
                   </Field>
 
                   {/* SUBMIT */}

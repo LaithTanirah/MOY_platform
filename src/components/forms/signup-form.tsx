@@ -34,49 +34,59 @@ type Option<T extends string> = { value: T; label: string };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const formSchema = (t: any) =>
-  z.object({
-    delegateName: z.string().min(1, t("errors.required")),
-    delegatePhone: z
-      .string()
-      .length(9, t("errors.length", { len: 9 }))
-      .regex(/^\d*$/, t("errors.digitsOnly")),
-    delegateEmail: z.string().email(t("errors.invalidEmail")),
-    delegateNationality: z.enum(["jordanian", "nonJordanian"]),
-    delegateRole: z
-      .enum(["owner", "authorizedOnRegistry", "written"])
-      .optional(),
-    delegateNationalId: z
-      .string()
-      .length(10, t("errors.length", { len: 10 }))
-      .regex(/^\d*$/, t("errors.digitsOnly")),
+  z
+    .object({
+      delegateName: z.string().min(1, t("errors.required")),
+      delegatePhone: z
+        .string()
+        .length(9, t("errors.length", { len: 9 }))
+        .regex(/^\d*$/, t("errors.digitsOnly")),
+      delegateEmail: z.string().email(t("errors.invalidEmail")),
+      delegateNationality: z.enum(["jordanian", "nonJordanian"]),
+      delegateRole: z
+        .enum(["owner", "authorizedOnRegistry", "written"])
+        .optional(),
+      delegateNationalId: z
+        .string()
+        .length(10, t("errors.length", { len: 10 }))
+        .regex(/^\d*$/, t("errors.digitsOnly")),
 
-    companySector: z
-      .enum(["charity", "cooperative", "sole_establishment", "company"])
-      .optional(),
-    orgNationalName: z.string().min(1, t("errors.required")),
-    orgNationalId: z
-      .string()
-      .length(10, t("errors.length", { len: 10 }))
-      .regex(/^\d*$/, t("errors.digitsOnly")),
-    orgEmail: z.string().email(t("errors.invalidEmail")),
-    orgPhone: z
-      .string()
-      .length(9, t("errors.length", { len: 9 }))
-      .regex(/^\d*$/, t("errors.digitsOnly")),
-    orgAddress: z.string().min(1, t("errors.required")),
+      companySector: z
+        .enum(["charity", "cooperative", "sole_establishment", "company"])
+        .optional(),
+      orgNationalName: z.string().min(1, t("errors.required")),
+      orgNationalId: z
+        .string()
+        .length(10, t("errors.length", { len: 10 }))
+        .regex(/^\d*$/, t("errors.digitsOnly")),
+      orgEmail: z.string().email(t("errors.invalidEmail")),
+      orgPhone: z
+        .string()
+        .length(9, t("errors.length", { len: 9 }))
+        .regex(/^\d*$/, t("errors.digitsOnly")),
+      orgAddress: z.string().min(1, t("errors.required")),
 
-    password: z.string().min(6, t("errors.min", { len: 6 })),
+      password: z.string().min(6, t("errors.min", { len: 6 })),
 
-    file: z
-      .instanceof(File)
-      .refine((file) => file.size <= 5_000_000, "Max size is 5MB")
-      .refine(
-        (file) =>
-          ["image/png", "image/jpeg", "application/pdf"].includes(file.type),
-        "Only PNG, JPG, JPEG, or PDF files are allowed",
-      )
-      .optional(),
-  });
+      file: z
+        .instanceof(File)
+        .refine((file) => file.size <= 5_000_000, "Max size is 5MB")
+        .refine(
+          (file) =>
+            ["image/png", "image/jpeg", "application/pdf"].includes(file.type),
+          "Only PNG, JPG, JPEG, or PDF files are allowed",
+        )
+        .optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (data.delegateRole === "written" && !data.file) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["file"],
+          message: t("errors.required"),
+        });
+      }
+    });
 
 export default function SignupForm({
   className,

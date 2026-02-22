@@ -45,49 +45,47 @@ type Option = { value: string; label: string };
 // type FacilityType = "" | "room" | "tent" | "suite" | "chalet";
 // type capacityType = "normal" | "double" | "triple" | "four" | "five";
 
-const formSchema = z.object({
-  serviceType: z.enum(["activity", "accommodation", "both"]).optional(),
-  houseOrCamp: z.enum(["house", "camp"]).optional(),
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const formSchema = (t: any) =>
+  z.object({
+    serviceType: z.enum(["activity", "accommodation", "both"]).optional(),
+    houseOrCamp: z.enum(["house", "camp"]).optional(),
 
-  house: z.string().optional(),
-  camp: z.string().optional(),
+    nameOfhouse: z.string().optional(),
 
-  dateRange: z
-    .object(
-      {
-        from: z.date(),
-        to: z.date(),
-      },
-      "please pick a date",
-    )
-    .optional(),
-  startTime: z.string().optional(),
-  endTime: z.string().optional(),
+    dateRange: z
+      .object(
+        {
+          from: z.date(),
+          to: z.date(),
+        },
+        "please pick a date",
+      )
+      .optional(),
+    startTime: z.string().optional(),
+    endTime: z.string().optional(),
 
-  beneficiaries: z
-    .number()
-    .min(1, "minumum number is 1")
-    .max(50, "maximum number is 50"),
+    beneficiaries: z
+      .number()
+      .min(1, t("errors.min", { len: 1 }))
+      .max(50, t("errors.max", { len: 50 })),
 
-  facility: z.enum(["room", "tent", "suite", "chalet"]).optional(),
-  capacity: z.enum(["normal", "double", "triple", "four", "five"]).optional(),
-  isShared: z.boolean().optional(),
+    facility: z.enum(["room", "tent", "suite", "chalet"]).optional(),
+    capacity: z.enum(["normal", "double", "triple", "four", "five"]).optional(),
+    isShared: z.boolean().optional(),
 
-  membershipCheck: z.boolean().optional(),
-  membershipType: z.enum(["jordanian", "arabic", "international"]).optional(),
-  memberNumber: z.string().optional(),
-  employeeCheck: z.boolean().optional(),
-  employeeType: z.enum(["worker", "retired"]).optional(),
-  employeeNumber: z.string().optional(),
-  discountCheck: z.boolean().optional(),
-  discountNumber: z.string().optional(),
-  discountDate: z.date().optional(),
+    membershipCheck: z.boolean().optional(),
+    membershipType: z.enum(["jordanian", "arabic", "international"]).optional(),
+    memberNumber: z.string().optional(),
+    employeeCheck: z.boolean().optional(),
+    employeeType: z.enum(["worker", "retired"]).optional(),
+    employeeNumber: z.string().optional(),
+    discountCheck: z.boolean().optional(),
+    discountNumber: z.string().optional(),
+    discountDate: z.date().optional(),
 
-  activity: z.string().optional(),
-});
-
-type formType = z.infer<typeof formSchema>;
-type FormErrors = Partial<Record<keyof formType, string>>;
+    activity: z.string().optional(),
+  });
 
 function daysBetween(from?: Date, to?: Date) {
   if (!from || !to) return 0;
@@ -119,13 +117,15 @@ export default function YouthHouse({
 }: React.ComponentProps<"div">) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const schema = formSchema(t);
+  type formType = z.infer<typeof schema>;
+  type FormErrors = Partial<Record<keyof formType, string>>;
 
   const [form, setForm] = useState<formType>({
     serviceType: undefined,
     houseOrCamp: "house",
 
-    house: undefined,
-    camp: undefined,
+    nameOfhouse: undefined,
 
     dateRange: undefined,
     startTime: undefined,
@@ -292,7 +292,7 @@ export default function YouthHouse({
     /* submit */
   }
   function validate(): boolean {
-    const result = formSchema.safeParse(form);
+    const result = schema.safeParse(form);
 
     if (!result.success) {
       const fieldErrors: FormErrors = {};
@@ -548,7 +548,6 @@ export default function YouthHouse({
                 </FieldGroup>
 
                 <FieldGroup>
-                  {/* first row */}
                   <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Commercial name */}
                     <Field>
@@ -732,85 +731,57 @@ export default function YouthHouse({
               {/* house type */}
               <FieldGroup>
                 {/* Youth House */}
-                {form.houseOrCamp === "house" && (
-                  <Field>
-                    <FieldLabel htmlFor="house">
-                      {t("reservation.fields.youthHouse")}{" "}
-                      <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Select
-                      value={form.house}
-                      onValueChange={(value) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          house: value as formType["house"],
-                        }))
-                      }
-                      dir={t("dir")}
-                      required
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue
-                          placeholder={t("reservation.placeholders.select")}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {houseOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </Field>
+                {form.houseOrCamp === "house" ? (
+                  <FieldLabel htmlFor="house">
+                    {t("reservation.fields.youthHouse")}{" "}
+                    <span className="text-red-500">*</span>
+                  </FieldLabel>
+                ) : (
+                  <FieldLabel htmlFor="camp">
+                    {t("reservation.fields.camp")}{" "}
+                    <span className="text-red-500">*</span>
+                  </FieldLabel>
                 )}
-
-                {/* camp */}
-                {form.houseOrCamp === "camp" && (
-                  <Field>
-                    <FieldLabel htmlFor="camp">
-                      {t("reservation.fields.camp")}{" "}
-                      <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Select
-                      value={form.camp}
-                      onValueChange={(value) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          camp: value as formType["camp"],
-                        }))
-                      }
-                      dir={t("dir")}
-                    >
-                      <SelectTrigger
-                        className={cn(
-                          formErrors.camp && "border-red-500",
-                          "w-full",
-                        )}
-                      >
-                        <SelectValue
-                          placeholder={t("reservation.placeholders.select")}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {campOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    {formErrors.camp && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {formErrors.camp}
-                      </p>
-                    )}
-                  </Field>
-                )}
+                <Field>
+                  <Select
+                    value={form.nameOfhouse}
+                    onValueChange={(value) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        nameOfhouse: value as formType["nameOfhouse"],
+                      }))
+                    }
+                    dir={t("dir")}
+                    required
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={t("reservation.placeholders.select")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {form.houseOrCamp === "house"
+                          ? houseOptions.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))
+                          : campOptions.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
               </FieldGroup>
 
               {/* Date row */}
