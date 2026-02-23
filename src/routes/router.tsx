@@ -3,8 +3,6 @@ import AppLayout from "@/layouts/app-layout";
 import Home from "../pages/home/home";
 import NotFound from "../pages/not-found";
 import LoginPage from "@/pages/auth/login-page";
-import PersonProfile from "@/pages/profile/person-profile";
-import OrganizationProfile from "@/pages/profile/organization-profile";
 import ConfirmationMessage from "@/pages/confirmation-message";
 import ServicesPage from "@/pages/service/services";
 import ServiceRequestsPage from "@/pages/service/service-requests";
@@ -30,14 +28,6 @@ const routes = createBrowserRouter([
   {
     path: "/signup",
     element: <SignupPage />,
-  },
-  {
-    path: "/person-profile",
-    element: <PersonProfile />,
-  },
-  {
-    path: "/organization-profile",
-    element: <OrganizationProfile />,
   },
   {
     path: "/youthHouse",

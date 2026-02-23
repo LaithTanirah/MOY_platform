@@ -67,8 +67,9 @@ const formSchema = (t: any) =>
 
       beneficiaries: z
         .number(t("errors.digitsOnly"))
-        .min(1, t("errors.minNumber", { min: 1 }))
-        .max(50, t("errors.maxNumber", { max: 50 })),
+        .min(1, t("errors.range", { min: 1, max: 50 }))
+        .max(50, t("errors.range", { min: 1, max: 50 }))
+        .optional(),
 
       activity: z.string().optional(),
 
@@ -114,6 +115,14 @@ const formSchema = (t: any) =>
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["nameOfhouse"],
+          message: t("errors.required"),
+        });
+      }
+
+      if (!data.beneficiaries) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["beneficiaries"],
           message: t("errors.required"),
         });
       }
@@ -225,8 +234,8 @@ export default function YouthHouse({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { t } = useTranslation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const schema = formSchema(t);
   type formType = z.infer<typeof schema>;
   type FormErrors = Partial<Record<keyof formType, string>>;
@@ -241,7 +250,7 @@ export default function YouthHouse({
     startTime: undefined,
     endTime: undefined,
 
-    beneficiaries: 0,
+    beneficiaries: undefined,
 
     facility: undefined,
     isShared: false,
@@ -822,7 +831,6 @@ export default function YouthHouse({
                         beneficiaries: Number(e.target.value),
                       }))
                     }
-                    required
                   />
                   <FieldError>{formErrors.beneficiaries}</FieldError>
                 </Field>

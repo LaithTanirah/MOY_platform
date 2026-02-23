@@ -81,6 +81,14 @@ const formSchema = (t: any) =>
         .optional(),
     })
     .superRefine((data, ctx) => {
+      if (!data.companySector) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["companySector"],
+          message: t("errors.required"),
+        });
+      }
+
       if (data.delegateRole === "written" && !data.file) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -255,7 +263,6 @@ export default function SignupForm({
                       }))
                     }
                     dir={t("dir")}
-                    required
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue
@@ -272,6 +279,7 @@ export default function SignupForm({
                       </SelectGroup>
                     </SelectContent>
                   </Select>
+                  <FieldError>{formErrors.companySector}</FieldError>
                 </Field>
 
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
