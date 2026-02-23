@@ -2,9 +2,14 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { CalendarDays, Hotel } from "lucide-react";
+import { CalendarDays, Hotel, User } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -31,32 +36,87 @@ import {
 } from "@/components/ui/input-group";
 import { Clock2Icon } from "lucide-react";
 import { z } from "zod";
+import Jordanian from "../profile/jordanian";
+import NonJordanian from "../profile/non-jordanian";
+import Organization from "../profile/organization";
 
 type Option = { value: string; label: string };
 // type complexType = "" | "youthCenter" | "sportComplex";
 // type serviceType = "" | "activity";
 
-const formSchema = z.object({
-  complexType: z.enum(["youthCenter", "sportComplex"]).optional(),
-  serviceType: z.enum(["activity"]).optional(),
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const formSchema = (t: any) =>
+  z
+    .object({
+      complexType: z.enum(["youthCenter", "sportComplex"]).optional(),
+      serviceType: z.enum(["activity"]).optional(),
 
-  center: z.string().optional(),
-  complex: z.string().optional(),
-  facilityType: z.string().optional(),
-  facilitys: z.string().optional(),
+      nameOfComplex: z.string().optional(),
+      facilityType: z.string().optional(),
+      facilitys: z.string().optional(),
 
-  beneficiaries: z
-    .number()
-    .min(1, "minumum number is 1")
-    .max(50, "maximum number is 50"),
+      beneficiaries: z
+        .number(t("errors.digitsOnly"))
+        .min(1, t("errors.range", { min: 1, max: 50 }))
+        .max(50, t("errors.range", { min: 1, max: 50 }))
+        .optional(),
 
-  dateRange: z.date().optional(),
-  startTime: z.string().optional(),
-  endTime: z.string().optional(),
-});
+      dateRange: z.date().optional(),
+      startTime: z.string().optional(),
+      endTime: z.string().optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (
+        data.serviceType === "activity" &&
+        (!data.startTime || !data.endTime)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["dateRange"],
+          message: t("errors.time"),
+        });
+      }
 
-type formType = z.infer<typeof formSchema>;
-type FormErrors = Partial<Record<keyof formType, string>>;
+      if (!data.dateRange) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["dateRange"],
+          message: t("errors.date"),
+        });
+      }
+
+      if (!data.beneficiaries) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["beneficiaries"],
+          message: t("errors.required"),
+        });
+      }
+
+      if (!data.nameOfComplex) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["nameOfComplex"],
+          message: t("errors.required"),
+        });
+      }
+
+      if (!data.facilityType) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["facilityType"],
+          message: t("errors.required"),
+        });
+      }
+
+      if (data.facilityType && !data.facilitys) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["facilitys"],
+          message: t("errors.required"),
+        });
+      }
+    });
 
 function daysBetween(from?: Date, to?: Date) {
   if (!from || !to) return 0;
@@ -86,18 +146,20 @@ export default function SportComplex({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { t } = useTranslation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const schema = formSchema(t);
+  type formType = z.infer<typeof schema>;
+  type FormErrors = Partial<Record<keyof formType, string>>;
 
   const [form, setForm] = useState<formType>({
     complexType: "sportComplex",
     serviceType: "activity",
 
-    center: undefined,
-    complex: undefined,
+    nameOfComplex: undefined,
     facilityType: undefined,
     facilitys: undefined,
-    beneficiaries: 0,
+    beneficiaries: undefined,
 
     dateRange: undefined,
     startTime: undefined,
@@ -238,7 +300,7 @@ export default function SportComplex({
     /* submit */
   }
   function validate(): boolean {
-    const result = formSchema.safeParse(form);
+    const result = schema.safeParse(form);
 
     if (!result.success) {
       const fieldErrors: FormErrors = {};
@@ -312,14 +374,30 @@ export default function SportComplex({
             <FieldGroup>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
+                  <User className="h-5 w-5 text-primary" />
+                  <h2 className="text-lg font-semibold">
+                    {t("reservation.sections.personal")}
+                  </h2>
+                </div>
+              </div>
+              {/* user Data from API */}
+              <FieldGroup>
+                <Jordanian />
+                <NonJordanian />
+                <Organization />
+              </FieldGroup>
+
+              <hr className="border-primary" />
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
                   <CalendarDays className="h-5 w-5 text-primary" />
                   <h2 className="text-lg font-semibold">
                     {t("reservation.sections.booking")}
                   </h2>
                 </div>
               </div>
-
-              {/* First row */}
+              {/* Types */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* complex type */}
                 <Field>
@@ -392,75 +470,57 @@ export default function SportComplex({
 
               {/* complex type */}
               <FieldGroup>
-                {form.complexType === "youthCenter" && (
-                  <Field>
-                    <FieldLabel htmlFor="center">
-                      {t("reservation.fields.youtCenter")}{" "}
-                      <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Select
-                      value={form.center}
-                      onValueChange={(value) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          center: value as formType["center"],
-                        }))
-                      }
-                      dir={t("dir")}
-                      required
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue
-                          placeholder={t("reservation.placeholders.select")}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {centerOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </Field>
+                {form.complexType === "youthCenter" ? (
+                  <FieldLabel htmlFor="center">
+                    {t("reservation.fields.youtCenter")}{" "}
+                    <span className="text-red-500">*</span>
+                  </FieldLabel>
+                ) : (
+                  <FieldLabel htmlFor="sportComplex">
+                    {t("reservation.fields.sportsComplex")}{" "}
+                    <span className="text-red-500">*</span>
+                  </FieldLabel>
                 )}
-
-                {form.complexType === "sportComplex" && (
-                  <Field>
-                    <FieldLabel htmlFor="sportComplex">
-                      {t("reservation.fields.sportsComplex")}{" "}
-                      <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Select
-                      value={form.complex}
-                      onValueChange={(value) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          complex: value as formType["complex"],
-                        }))
-                      }
-                      dir={t("dir")}
-                      required
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue
-                          placeholder={t("reservation.placeholders.select")}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {complexOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </Field>
-                )}
+                <Field>
+                  <Select
+                    value={form.nameOfComplex}
+                    onValueChange={(value) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        nameOfComplex: value as formType["nameOfComplex"],
+                      }))
+                    }
+                    dir={t("dir")}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={t("reservation.placeholders.select")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {form.complexType === "youthCenter"
+                          ? centerOptions.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))
+                          : complexOptions.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <FieldError>{formErrors.nameOfComplex}</FieldError>
+                </Field>
               </FieldGroup>
 
               {/* facilitys */}
@@ -480,7 +540,6 @@ export default function SportComplex({
                       }))
                     }
                     dir={t("dir")}
-                    required
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue
@@ -497,6 +556,7 @@ export default function SportComplex({
                       </SelectGroup>
                     </SelectContent>
                   </Select>
+                  <FieldError>{formErrors.facilityType}</FieldError>
                 </Field>
 
                 {/* facilitys */}
@@ -515,7 +575,6 @@ export default function SportComplex({
                         }))
                       }
                       dir={t("dir")}
-                      required
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue
@@ -532,11 +591,10 @@ export default function SportComplex({
                         </SelectGroup>
                       </SelectContent>
                     </Select>
+                    <FieldError>{formErrors.facilitys}</FieldError>
                   </Field>
                 )}
               </FieldGroup>
-
-              <hr className="border-border" />
 
               {/* date */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -636,6 +694,7 @@ export default function SportComplex({
                       </FieldGroup>
                     </PopoverContent>
                   </Popover>
+                  <FieldError>{formErrors.dateRange}</FieldError>
                 </Field>
 
                 <Field>
@@ -673,7 +732,6 @@ export default function SportComplex({
                   <Input
                     id="beneficiaries"
                     type="number"
-                    min={1}
                     value={form.beneficiaries}
                     onChange={(e) =>
                       setForm((prev) => ({
@@ -681,8 +739,8 @@ export default function SportComplex({
                         beneficiaries: Number(e.target.value),
                       }))
                     }
-                    required
                   />
+                  <FieldError>{formErrors.beneficiaries}</FieldError>
                 </Field>
               </FieldGroup>
 
