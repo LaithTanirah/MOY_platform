@@ -16,6 +16,9 @@ import { Link, useNavigate } from "react-router-dom";
 import sanad from "@/assets/sanad.png";
 import sanadLogo from "@/assets/sanad-logo.png";
 import { z } from "zod";
+import { login } from "@/api/api";
+import toast from "react-hot-toast";
+
 
 type UserType = "individual" | "organization";
 
@@ -24,7 +27,7 @@ const formSchema = (t: any) =>
   z.object({
     ID: z
       .string()
-      .length(10, t("errors.length", { len: 10 }))
+      .length(9, t("errors.length", { len: 9 }))
       .regex(/^\d*$/, t("errors.digitsOnly")),
 
     password: z.string().min(6, t("errors.min", { len: 6 })),
@@ -70,21 +73,23 @@ export function LoginForm({
     return true;
   }
 
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-    if (!validate()) {
-      console.log(formErrors);
-      return;
-    }
+async function handleLogin(e: React.FormEvent) {
+  e.preventDefault();
+  if (!validate()) return;
 
-    try {
-      // api call
-      console.log(form);
-      navigate("/services");
-    } catch (error) {
-      console.error(error);
-    }
+  const formData = new FormData();
+  formData.append("Institutions_NID", form.ID);
+  formData.append("Password", form.password);
+  try {
+    const res = await login(formData);
+    if (res?.token) localStorage.setItem("token", res.token);
+    toast.success(t("auth.loginSuccess"));
+
+    navigate("/services");
+  } catch (error: any) {
+    toast.error(t("auth.loginFailed"));
   }
+}
 
   function handleSanad(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
