@@ -55,7 +55,9 @@
     "orgAddress": "Organization Address",
     "sanadSignOn": "Single sign-on",
     "file": "Upload the delegation",
-    "delegateName": "Delegate name"
+    "delegateName": "Delegate name",
+    "loginSuccess": "Login successful",
+    "loginFailed": "Login failed"
   },
   "errors": {
     "required": "This field is required",

@@ -54,7 +54,9 @@
     "orgEmail": "البريد الإلكتروني للمنشأة",
     "orgAddress": "عنوان المنشأة",
     "sanadSignOn": "الدخول الموحد",
-    "delegateName": "اسم المفوض"
+    "delegateName": "اسم المفوض",
+    "loginSuccess": "تم تسجيل الدخول بنجاح",
+    "loginFailed": "فشل تسجيل الدخول"
   },
   "errors": {
     "required": "هذا الحقل مطلوب",

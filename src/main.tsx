@@ -6,11 +6,13 @@ import routes from "./routes/router";
 import { ThemeProvider } from "@/components/theme-provider";
 import DirectionWrapper from "./components/features/DirectionWrapper";
 import "./i18n/i18n";
+import { Toaster } from "react-hot-toast";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <DirectionWrapper>
+        <Toaster position="top-right" reverseOrder={false} />
         <RouterProvider router={routes} />
       </DirectionWrapper>
     </ThemeProvider>
