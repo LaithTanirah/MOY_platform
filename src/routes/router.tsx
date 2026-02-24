@@ -32,16 +32,16 @@ const routes = createBrowserRouter([
     path: "/signup",
     element: <SignupPage />,
   },
+  {
+    path: "/user/services",
+    element: <ServicesPage />,
+  },
 
   {
     path: "/user",
     element: <ProtectedLayout />,
     loader: protectedLoader,
     children: [
-      {
-        path: "services",
-        element: <ServicesPage />,
-      },
       {
         path: "youthHouse",
         element: <YouthHousePage />,

@@ -19,7 +19,6 @@ import { z } from "zod";
 import { login } from "@/api/api";
 import toast from "react-hot-toast";
 
-
 type UserType = "individual" | "organization";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -73,23 +72,24 @@ export function LoginForm({
     return true;
   }
 
-async function handleLogin(e: React.FormEvent) {
-  e.preventDefault();
-  if (!validate()) return;
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+    if (!validate()) return;
 
-  const formData = new FormData();
-  formData.append("Institutions_NID", form.ID);
-  formData.append("Password", form.password);
-  try {
-    const res = await login(formData);
-    if (res?.token) localStorage.setItem("token", res.token);
-    toast.success(t("auth.loginSuccess"));
+    const formData = new FormData();
+    formData.append("Institutions_NID", form.ID);
+    formData.append("Password", form.password);
+    try {
+      const res = await login(formData);
+      if (res?.token) localStorage.setItem("authToken", res.token);
+      toast.success(t("auth.loginSuccess"));
 
-    navigate("/services");
-  } catch (error: any) {
-    toast.error(t("auth.loginFailed"));
+      navigate("/user/services");
+    } catch (error) {
+      toast.error(t("auth.loginFailed"));
+      console.log(error);
+    }
   }
-}
 
   function handleSanad(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
@@ -198,7 +198,7 @@ async function handleLogin(e: React.FormEvent) {
                           ID: e.target.value,
                         }))
                       }
-                      maxLength={10}
+                      maxLength={9}
                       placeholder={t("auth.orgNationalIdPlaceholder")}
                     />
                     <FieldError>{formErrors.ID}</FieldError>
