@@ -57,6 +57,10 @@ const routes = createBrowserRouter([
     loader: protectedLoader,
     children: [
       {
+        path: "services",
+        element: <ServicesPage />,
+      },
+      {
         path: "youthHouse",
         element: <YouthHousePage />,
       },
@@ -72,7 +76,6 @@ const routes = createBrowserRouter([
         path: "Service-Requests",
         element: <ServiceRequestsPage />,
       },
-
       {
         path: "goverment-profile",
         element: <GovernmentProfile />,
