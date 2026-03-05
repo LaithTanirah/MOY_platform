@@ -72,12 +72,14 @@
     "free_zones_establishments": "Establishments affiliated with free and developmental zones",
     "dateofEstablishment": "Date of establishment",
     "dateofBirth": "Date of birth",
-    "JobTitle": "Job title",
+    "JobTitle": "Job title of the delegate",
     "RegistrationNumber": "Registration number",
     "IdentificationNumber": "Identification number for the organization",
     "terms": "Accept terms and conditions",
     "termsDesc": "I confirm that the information I have provided is accurate, and I consent to the retrieval and processing of my personal data by the courts and the company's data protection authorities for the purpose of providing the service.",
-    "acceptTerms": "You must accept the terms and conditions to proceed."
+    "acceptTerms": "You must accept the terms and conditions to proceed.",
+    "verification": "Information verification",
+    "verificationSuccess": "Verification successful! You can now submit the form."
   },
   "errors": {
     "required": "This field is required",

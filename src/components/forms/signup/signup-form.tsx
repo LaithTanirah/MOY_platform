@@ -203,11 +203,11 @@ export default function SignupForm({
   const [profile, setProfile] = useState<Profile | null>(null);
 
   // Redirect if token ready but missing
-  useEffect(() => {
-    if (tokenReady && !localToken) {
-      navigate("/auth/sanad_signup", { replace: true });
-    }
-  }, [tokenReady, localToken, navigate]);
+  // useEffect(() => {
+  //   if (tokenReady && !localToken) {
+  //     navigate("/auth/sanad_signup", { replace: true });
+  //   }
+  // }, [tokenReady, localToken, navigate]);
 
   // Fetch profile if token exists
   useEffect(() => {
@@ -374,46 +374,6 @@ export default function SignupForm({
           <CardContent className="px-6 py-2 md:p-8 md:py-4">
             <form onSubmit={handleSubmit}>
               <FieldGroup>
-                {/* Delegate Role */}
-                <Field>
-                  <FieldLabel>
-                    {t("auth.delegateRole")}{" "}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Select
-                    value={form.delegateRole}
-                    onValueChange={(value) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        delegateRole: value as formType["delegateRole"],
-                      }))
-                    }
-                    dir={t("dir")}
-                    required
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue
-                        placeholder={t("reservation.placeholders.select")}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {showAssociationRole
-                          ? associationRoleOptions.map((o) => (
-                              <SelectItem key={o.value} value={o.value}>
-                                {o.label}
-                              </SelectItem>
-                            ))
-                          : roleOptions.map((o) => (
-                              <SelectItem key={o.value} value={o.value}>
-                                {o.label}
-                              </SelectItem>
-                            ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </Field>
-
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Name */}
                   <Field>
@@ -560,6 +520,49 @@ export default function SignupForm({
                   </Field>
                 </FieldGroup>
 
+                {/* Divider */}
+                <hr className="border-primary" />
+
+                {/* Delegate Role */}
+                <Field>
+                  <FieldLabel>
+                    {t("auth.delegateRole")}{" "}
+                    <span className="text-red-500">*</span>
+                  </FieldLabel>
+                  <Select
+                    value={form.delegateRole}
+                    onValueChange={(value) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        delegateRole: value as formType["delegateRole"],
+                      }))
+                    }
+                    dir={t("dir")}
+                    required
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={t("reservation.placeholders.select")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {showAssociationRole
+                          ? associationRoleOptions.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))
+                          : roleOptions.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+
                 {/* Attachment */}
                 {showWrittenAttachment && (
                   <Field>
@@ -619,9 +622,6 @@ export default function SignupForm({
                     <FieldError>{formErrors.file}</FieldError>
                   </Field>
                 )}
-
-                {/* Divider */}
-                <hr className="border-primary" />
 
                 {/* Company Sector */}
                 <Field>
@@ -815,6 +815,9 @@ export default function SignupForm({
                       <FieldDescription>{t("auth.termsDesc")}</FieldDescription>
                     </FieldContent>
                   </Field>
+                  <FieldError>
+                    {!isChecked && showError && t("auth.acceptTerms")}
+                  </FieldError>
                 </FieldGroup>
 
                 {/* Submit */}

@@ -54,7 +54,7 @@ export default function IndividualForm({
         return res.json();
       })
       .then((json) => {
-        setData(json);
+        setData(json.datas);
         console.log(json);
       })
       .catch((err) => {
@@ -150,6 +150,7 @@ export default function IndividualForm({
                   />
                 </Field>
               </FieldGroup>
+
               {/* gender and social state */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* gender */}

@@ -47,8 +47,8 @@ const formSchema = (t: any) =>
 
       RegistrationNumber: z
         .string()
-        .length(6, t("errors.length", { len: 6 }))
-        .regex(/^\d*$/, t("errors.digitsOnly")),
+        .regex(/^\d{3}\/\d{3}$/, t("errors.digitsOnly")),
+
       delegateDateOfBirth: z.date().optional(),
       JobTitle: z.string().min(1, t("errors.required")),
 
@@ -72,6 +72,7 @@ const formSchema = (t: any) =>
         });
       }
     });
+
 export default function GovSignupForm({
   className,
   ...props
@@ -83,10 +84,11 @@ export default function GovSignupForm({
   type FormErrors = Partial<Record<keyof formType, string>>;
 
   const [open, setOpen] = useState(false);
+  const [verification, setVerification] = useState(false);
 
   // Form state
   const [form, setForm] = useState<formType>({
-    delegateName: "",
+    delegateName: "name",
     delegateNationalId: "",
     RegistrationNumber: "",
     JobTitle: "",
@@ -101,6 +103,11 @@ export default function GovSignupForm({
 
   const [isChecked, setIsChecked] = useState(false);
   const [showError, setShowError] = useState(false);
+
+  function handleVerification() {
+    setVerification(true);
+    toast.success(t("auth.verificationSuccess"));
+  }
 
   const formatPhone = (num: string | undefined) => `+962${num}`;
 
@@ -183,92 +190,29 @@ export default function GovSignupForm({
           <CardContent className="px-6 py-2 md:px-8 md:py-4">
             <form onSubmit={handleSubmit}>
               <FieldGroup>
-                {/* Name */}
+                {/* Delegate National ID */}
                 <Field>
-                  <FieldLabel htmlFor="delegateName">
-                    {t("auth.delegateName")}{" "}
+                  <FieldLabel htmlFor="delegateNationalId">
+                    {t("auth.delegateNationalId")}
                     <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Input
-                    id="delegateName"
+                    id="delegateNationalId"
                     type="text"
-                    value={form.delegateName}
-                    readOnly
-                    className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
+                    value={form.delegateNationalId}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        delegateNationalId: e.target.value,
+                      }))
+                    }
+                    maxLength={10}
                   />
-                  <FieldError>{formErrors.delegateName}</FieldError>
+
+                  <FieldError>{formErrors.delegateNationalId}</FieldError>
                 </Field>
 
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {/* Delegate National ID */}
-                  <Field>
-                    <FieldLabel htmlFor="delegateNationalId">
-                      {t("auth.delegateNationalId")}
-                      <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Input
-                      id="delegateNationalId"
-                      type="text"
-                      value={form.delegateNationalId}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          delegateNationalId: e.target.value,
-                        }))
-                      }
-                      maxLength={10}
-                    />
-
-                    <FieldError>{formErrors.delegateNationalId}</FieldError>
-                  </Field>
-
-                  {/* Delegate Registration number */}
-                  <Field>
-                    <FieldLabel htmlFor="RegistrationNumber">
-                      {t("auth.RegistrationNumber")}
-                      <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Input
-                      id="RegistrationNumber"
-                      dir="ltr"
-                      type="text"
-                      value={form.RegistrationNumber}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          RegistrationNumber: formatRegistration(
-                            e.target.value,
-                          ),
-                        }))
-                      }
-                      placeholder="123/456"
-                      maxLength={7}
-                      className="text-center tracking-[0.5em]"
-                    />
-                    <FieldError>{formErrors.RegistrationNumber}</FieldError>
-                  </Field>
-                </FieldGroup>
-
-                <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <Field>
-                    <FieldLabel htmlFor="JobTitle">
-                      {t("auth.JobTitle")}
-                      <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Input
-                      id="JobTitle"
-                      type="text"
-                      value={form.JobTitle}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          JobTitle: e.target.value,
-                        }))
-                      }
-                    />
-                    <FieldError>{formErrors.JobTitle}</FieldError>
-                  </Field>
-
                   {/* birth date */}
                   <Field className="mx-auto">
                     <FieldLabel htmlFor="date">
@@ -309,38 +253,115 @@ export default function GovSignupForm({
                     </Popover>
                     <FieldError>{formErrors.delegateDateOfBirth}</FieldError>
                   </Field>
+
+                  {/* Delegate Registration number */}
+                  <Field>
+                    <FieldLabel htmlFor="RegistrationNumber">
+                      {t("auth.RegistrationNumber")}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="RegistrationNumber"
+                      dir="ltr"
+                      type="text"
+                      value={form.RegistrationNumber}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          RegistrationNumber: formatRegistration(
+                            e.target.value,
+                          ),
+                        }))
+                      }
+                      placeholder="123/456"
+                      maxLength={7}
+                      className="text-center tracking-[0.5em]"
+                    />
+                    <FieldError>{formErrors.RegistrationNumber}</FieldError>
+                  </Field>
                 </FieldGroup>
+
+                {!verification && (
+                  <Field className="mx-auto">
+                    <Button
+                      className="w-full py-4"
+                      type="button"
+                      onClick={handleVerification}
+                    >
+                      {t("auth.verification")}
+                    </Button>
+                  </Field>
+                )}
+
+                {/* Name */}
+                {verification && (
+                  <Field>
+                    <FieldLabel htmlFor="delegateName">
+                      {t("auth.delegateName")}{" "}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="delegateName"
+                      type="text"
+                      value={form.delegateName}
+                      readOnly
+                      className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
+                    />
+                    <FieldError>{formErrors.delegateName}</FieldError>
+                  </Field>
+                )}
 
                 {/* Divider */}
                 <hr className="border-primary" />
 
-                {/*  Identification number */}
-                <Field>
-                  <FieldLabel htmlFor="IdentificationNumber">
-                    {t("auth.IdentificationNumber")}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input
-                    id="IdentificationNumber"
-                    type="text"
-                    value={form.IdentificationNumber}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        IdentificationNumber: e.target.value,
-                      }))
-                    }
-                    maxLength={10}
-                  />
+                <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/*  Identification number */}
+                  <Field>
+                    <FieldLabel htmlFor="IdentificationNumber">
+                      {t("auth.IdentificationNumber")}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="IdentificationNumber"
+                      type="text"
+                      value={form.IdentificationNumber}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          IdentificationNumber: e.target.value,
+                        }))
+                      }
+                      maxLength={10}
+                    />
 
-                  <FieldError>{formErrors.IdentificationNumber}</FieldError>
-                </Field>
+                    <FieldError>{formErrors.IdentificationNumber}</FieldError>
+                  </Field>
+
+                  <Field>
+                    <FieldLabel htmlFor="JobTitle">
+                      {t("auth.JobTitle")}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="JobTitle"
+                      type="text"
+                      value={form.JobTitle}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          JobTitle: e.target.value,
+                        }))
+                      }
+                    />
+                    <FieldError>{formErrors.JobTitle}</FieldError>
+                  </Field>
+                </FieldGroup>
 
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Email */}
                   <Field>
                     <FieldLabel htmlFor="orgEmail">
-                      {t("auth.orgEmail")}
+                      {t("auth.entityEmail")}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Input
@@ -360,7 +381,7 @@ export default function GovSignupForm({
                   {/* Phone */}
                   <Field>
                     <FieldLabel htmlFor="orgPhone">
-                      {t("auth.orgPhone")}
+                      {t("auth.entityPhone")}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <div dir="ltr" className="flex items-center">
@@ -412,6 +433,9 @@ export default function GovSignupForm({
                       <FieldDescription>{t("auth.termsDesc")}</FieldDescription>
                     </FieldContent>
                   </Field>
+                  <FieldError>
+                    {!isChecked && showError && t("auth.acceptTerms")}
+                  </FieldError>
                 </FieldGroup>
 
                 {/* Submit */}
@@ -419,7 +443,7 @@ export default function GovSignupForm({
                   <Button
                     type="submit"
                     className="w-full py-6 text-base"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !verification}
                   >
                     {isSubmitting ? t("auth.signingup") : t("auth.signup")}
                   </Button>
