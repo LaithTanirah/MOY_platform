@@ -94,13 +94,6 @@ const formSchema = (t: any) =>
         .length(9, t("errors.length", { len: 9 }))
         .regex(/^\d*$/, t("errors.digitsOnly"))
         .regex(/^7/, t("errors.jordanNumber")),
-      password: z
-        .string()
-        .min(6, t("errors.min", { len: 6 }))
-        .regex(
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/,
-          t("errors.passwordStrength"),
-        ),
 
       file: z
         .instanceof(File)
@@ -192,7 +185,6 @@ export default function SignupForm({
     orgDate: undefined,
     orgEmail: "",
     orgPhone: "",
-    password: "",
     file: undefined,
   });
   const [formErrors, setFormErrors] = useState<FormErrors>({});
@@ -211,11 +203,11 @@ export default function SignupForm({
   const [profile, setProfile] = useState<Profile | null>(null);
 
   // Redirect if token ready but missing
-  useEffect(() => {
-    if (tokenReady && !localToken) {
-      navigate("/auth/sanad_signup", { replace: true });
-    }
-  }, [tokenReady, localToken, navigate]);
+  // useEffect(() => {
+  //   if (tokenReady && !localToken) {
+  //     navigate("/auth/sanad_signup", { replace: true });
+  //   }
+  // }, [tokenReady, localToken, navigate]);
 
   // Fetch profile if token exists
   useEffect(() => {
@@ -334,7 +326,6 @@ export default function SignupForm({
       formData.append("institutions_NID", form.orgNationalId);
       formData.append("institutions_PhonNum", formatPhone(form.orgPhone));
       formData.append("institutions_Email", form.orgEmail);
-      formData.append("password", form.password);
       if (form.file) {
         formData.append("delegation", form.file);
       }
@@ -342,7 +333,9 @@ export default function SignupForm({
       console.log(form);
       await register(formData);
 
-      toast.success(t("auth.registerSuccess"));
+      toast.success(t("auth.orgSuccessDelay"), {
+        duration: 20000, // 20 second
+      });
       navigate("/auth/login");
     } catch (error) {
       toast.error(t("auth.registerFailed"));
@@ -367,65 +360,20 @@ export default function SignupForm({
     >
       <div className="overflow-hidden rounded-2xl border bg-background shadow-sm">
         {/* HEADER */}
-        <div className="bg-primary text-white px-6 md:px-8 py-7">
-          <div className="flex flex-col items-center justify-center text-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20">
-              <LogIn className="h-6 w-6" />
-            </div>
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold">
-                {t("form.gate")}
-              </h1>
-              <p className="mt-1 text-sm opacity-90">{t("form.reservation")}</p>
-            </div>
+        <div className="bg-primary text-white text-center px-6 pt-4 pb-4">
+          <div className="mx-auto mb-2 flex size-11 items-center justify-center rounded-full bg-white/20">
+            <LogIn className="h-6 w-6" />
           </div>
+
+          <h1 className="text-lg font-bold">{t("form.gate")}</h1>
+          <p className="mt-1 text-sm opacity-90">{t("form.reservation")}</p>
         </div>
 
         {/* FORM */}
         <Card className="rounded-none shadow-none dark:bg-slate-900">
-          <CardContent className="p-6 md:p-8">
+          <CardContent className="px-6 py-2 md:p-8 md:py-4">
             <form onSubmit={handleSubmit}>
               <FieldGroup>
-                {/* Delegate Role */}
-                <Field>
-                  <FieldLabel>
-                    {t("auth.delegateRole")}{" "}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Select
-                    value={form.delegateRole}
-                    onValueChange={(value) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        delegateRole: value as formType["delegateRole"],
-                      }))
-                    }
-                    dir={t("dir")}
-                    required
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue
-                        placeholder={t("reservation.placeholders.select")}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {showAssociationRole
-                          ? associationRoleOptions.map((o) => (
-                              <SelectItem key={o.value} value={o.value}>
-                                {o.label}
-                              </SelectItem>
-                            ))
-                          : roleOptions.map((o) => (
-                              <SelectItem key={o.value} value={o.value}>
-                                {o.label}
-                              </SelectItem>
-                            ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </Field>
-
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Name */}
                   <Field>
@@ -572,6 +520,49 @@ export default function SignupForm({
                   </Field>
                 </FieldGroup>
 
+                {/* Divider */}
+                <hr className="border-primary" />
+
+                {/* Delegate Role */}
+                <Field>
+                  <FieldLabel>
+                    {t("auth.delegateRole")}{" "}
+                    <span className="text-red-500">*</span>
+                  </FieldLabel>
+                  <Select
+                    value={form.delegateRole}
+                    onValueChange={(value) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        delegateRole: value as formType["delegateRole"],
+                      }))
+                    }
+                    dir={t("dir")}
+                    required
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={t("reservation.placeholders.select")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {showAssociationRole
+                          ? associationRoleOptions.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))
+                          : roleOptions.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+
                 {/* Attachment */}
                 {showWrittenAttachment && (
                   <Field>
@@ -631,9 +622,6 @@ export default function SignupForm({
                     <FieldError>{formErrors.file}</FieldError>
                   </Field>
                 )}
-
-                {/* Divider */}
-                <hr className="border-primary" />
 
                 {/* Company Sector */}
                 <Field>
@@ -800,25 +788,6 @@ export default function SignupForm({
                   />
                 </Field>
 
-                {/* Password */}
-                <Field>
-                  <FieldLabel htmlFor="password">
-                    {t("auth.password")} <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={form.password}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        password: e.target.value,
-                      }))
-                    }
-                  />
-                  <FieldError>{formErrors.password}</FieldError>
-                </Field>
-
                 {/* terms checkBox */}
                 <FieldGroup className="mx-auto" dir={t("dir")}>
                   <Field
@@ -846,6 +815,9 @@ export default function SignupForm({
                       <FieldDescription>{t("auth.termsDesc")}</FieldDescription>
                     </FieldContent>
                   </Field>
+                  <FieldError>
+                    {!isChecked && showError && t("auth.acceptTerms")}
+                  </FieldError>
                 </FieldGroup>
 
                 {/* Submit */}
