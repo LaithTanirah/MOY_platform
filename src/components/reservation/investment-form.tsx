@@ -12,6 +12,7 @@ import { Briefcase, User } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import FileUpload from "@/components/ui/file-upload";
 import { z } from "zod";
 
 const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
@@ -51,9 +52,9 @@ export default function InvestmentForm({ className }: { className?: string }) {
     investmentDuration: "",
     financialProposal: "",
   });
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [openTypes, setOpenTypes] = useState(false);
 
   function validate() {
@@ -106,6 +107,7 @@ export default function InvestmentForm({ className }: { className?: string }) {
         <div className="flex size-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur">
           <Briefcase className="h-7 w-7" />
         </div>
+
         <div>
           <h1 className="text-xl font-bold">
             {t("reservation.investment.title")}
@@ -116,62 +118,83 @@ export default function InvestmentForm({ className }: { className?: string }) {
         </div>
       </div>
 
-      <Card className="rounded-none shadow-none border-0">
+      <Card className="rounded-none shadow-none border-0 bg-card">
         <CardContent className="p-6 bg-muted/30">
           <form onSubmit={handleSubmit}>
             <FieldGroup className="space-y-6">
-              {/* ================= BENEFICIARY INFO CARD ================= */}
+              {/* USER CARD */}
               <Card
-                className="group relative overflow-hidden rounded-2xl 
-                border border-blue-200/40 
-                bg-gradient-to-br from-blue-50/70 via-white/60 to-blue-100/40 
-                backdrop-blur-xl 
-                shadow-lg 
-                transition-all duration-500 ease-out
-                hover:-translate-y-1 hover:shadow-2xl hover:border-primary/40"
+                className="
+                            group relative overflow-hidden rounded-2xl
+                            border border-border
+                            bg-background/70
+                            backdrop-blur-xl
+                            shadow-md
+                            transition-all duration-500
+                            hover:-translate-y-1 hover:shadow-2xl
+                          "
               >
-                {/* Glow Effects */}
-                <div className="absolute -top-24 -right-24 w-80 h-80 bg-primary/20 rounded-full blur-3xl opacity-30 transition-all duration-500 group-hover:opacity-50" />
-                <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-blue-300/20 rounded-full blur-3xl opacity-20 transition-all duration-500 group-hover:opacity-40" />
+                {/* gradient border glow */}
+                <div
+                  className="
+                              absolute inset-0 rounded-2xl opacity-0
+                              bg-gradient-to-r from-primary/30 via-primary/10 to-primary/30
+                              blur-xl transition duration-500
+                              group-hover:opacity-100
+                            "
+                />
 
-                <CardContent className="relative px-6 py-2">
+                {/* glass overlay */}
+                <div
+                  className="
+                              absolute inset-0 rounded-2xl
+                              bg-gradient-to-br from-transparent via-primary/5 to-transparent
+                              opacity-0 group-hover:opacity-100
+                              transition duration-500
+                            "
+                />
+
+                <CardContent className="relative px-6 py-4">
                   <div className="flex items-center gap-6">
-                    {/* Avatar */}
-                    <div className="relative transition-all duration-500 group-hover:scale-105">
+                    {/* avatar */}
+                    <div className="relative">
                       <div
-                        className="w-16 h-16 rounded-full 
-                      bg-white/60 backdrop-blur-md 
-                      flex items-center justify-center 
-                      ring-4 ring-primary/20 
-                      shadow-md 
-                      transition-all duration-500 
-                      group-hover:ring-primary/40 group-hover:shadow-xl"
+                        className="
+                                    w-16 h-16 rounded-full
+                                    bg-primary/10
+                                    flex items-center justify-center
+                                    ring-4 ring-primary/20
+                                    shadow-sm
+                                    transition group-hover:scale-105
+                                  "
                       >
-                        <User className="h-8 w-8 text-primary transition-all duration-500 group-hover:scale-110" />
+                        <User className="h-8 w-8 text-primary" />
                       </div>
 
-                      <span className="absolute bottom-1 right-1 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full" />
+                      {/* status */}
+                      <span className="absolute bottom-1 right-1 w-3 h-3 bg-emerald-500 border-2 border-background rounded-full" />
                     </div>
 
-                    {/* Info */}
+                    {/* text */}
                     <div className="space-y-1">
                       <p className="text-xs uppercase tracking-widest text-primary/80">
                         {t("reservation.sections.personal")}
                       </p>
 
-                      <h3 className="text-xl font-bold text-slate-800 tracking-wide">
+                      <h3 className="text-xl font-bold text-foreground tracking-wide">
                         {t("shared.beneficiaryName")}
                       </h3>
 
-                      <p className="text-sm text-slate-500">
+                      <p className="text-sm text-muted-foreground">
                         ليث احمد ابراهيم تنيره
                       </p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
+
               {/* DETAILS */}
-              <div className="bg-white rounded-xl p-5 shadow-sm border">
+              <div className="bg-card rounded-xl p-5 shadow-sm border border-border">
                 <h2 className="text-lg font-semibold mb-6">
                   {t("reservation.investment.sections.details")}
                 </h2>
@@ -179,45 +202,33 @@ export default function InvestmentForm({ className }: { className?: string }) {
                 <div className="grid md:grid-cols-2 gap-6">
                   <Field>
                     <FieldLabel>
-                      {t("reservation.investment.fields.investmentType")}{" "}
+                      {t("reservation.investment.fields.investmentType")}
                       <span className="text-destructive">*</span>
                     </FieldLabel>
 
                     <div
                       className={cn(
-                        "border rounded-xl overflow-hidden bg-background transition-all duration-300",
-                        openTypes && "shadow-md",
+                        "border rounded-xl overflow-hidden bg-background",
                         errors.investmentType && "border-red-500",
                       )}
                     >
-                      {/* Header */}
                       <button
                         type="button"
                         onClick={() => setOpenTypes(!openTypes)}
-                        className="flex items-center justify-between w-full h-9  rounded-md px-3 bg-background cursor-pointer"
+                        className="flex items-center justify-between w-full h-9 px-3"
                       >
                         <span className="text-sm">
                           {form.investmentType?.length
-                            ? `${form.investmentType.length} ${t("reservation.investment.selected")}`
+                            ? `${form.investmentType.length} ${t(
+                                "reservation.investment.selected",
+                              )}`
                             : t("reservation.placeholders.select")}
                         </span>
-
-                        <svg
-                          className={cn(
-                            "w-4 h-4 transition-transform duration-300",
-                            openTypes && "rotate-180",
-                          )}
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path d="M5 8l5 5 5-5H5z" />
-                        </svg>
                       </button>
 
-                      {/* Animated Options */}
                       <div
                         className={cn(
-                          "grid grid-cols-2 gap-3 px-4 transition-all duration-300 ease-in-out",
+                          "grid grid-cols-2 gap-3 px-4 transition-all",
                           openTypes
                             ? "max-h-96 py-4 opacity-100"
                             : "max-h-0 opacity-0",
@@ -234,15 +245,14 @@ export default function InvestmentForm({ className }: { className?: string }) {
                             <label
                               key={key}
                               className={cn(
-                                "flex items-center gap-2 p-2 rounded-md cursor-pointer border transition",
+                                "flex items-center gap-2 p-2 rounded-md cursor-pointer border",
                                 selected
-                                  ? "bg-blue-50 border-blue-500"
-                                  : "hover:bg-muted border-transparent",
+                                  ? "bg-primary/10 border-primary"
+                                  : "hover:bg-muted/70 border-transparent",
                               )}
                             >
                               <input
                                 type="checkbox"
-                                className="accent-blue-600"
                                 checked={selected}
                                 onChange={(e) => {
                                   const checked = e.target.checked;
@@ -272,170 +282,112 @@ export default function InvestmentForm({ className }: { className?: string }) {
 
                   <Field>
                     <FieldLabel>
-                      {t("reservation.investment.fields.investmentLocation")}{" "}
-                      <span className="text-destructive">*</span>
+                      {t("reservation.investment.fields.investmentLocation")}
                     </FieldLabel>
+
                     <Input
                       maxLength={200}
-                      className={cn(
-                        errors.investmentLocation &&
-                          "border-red-500 focus-visible:ring-red-500",
-                      )}
                       onChange={(e) =>
-                        setForm({ ...form, investmentLocation: e.target.value })
+                        setForm({
+                          ...form,
+                          investmentLocation: e.target.value,
+                        })
                       }
                     />
+
                     <FieldError>{errors.investmentLocation}</FieldError>
                   </Field>
 
                   <Field>
                     <FieldLabel>
-                      {t("reservation.investment.fields.investmentDuration")}{" "}
-                      <span className="text-destructive">*</span>
+                      {t("reservation.investment.fields.investmentDuration")}
                     </FieldLabel>
-                    <div
-                      className={cn(
-                        "flex rounded-lg overflow-hidden border",
-                        errors.investmentDuration && "border-red-500",
-                      )}
-                    >
-                      <Input
-                        inputMode="numeric"
-                        className="border-0 focus-visible:ring-0"
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            investmentDuration: e.target.value,
-                          })
-                        }
-                      />
-                      <span className="flex items-center px-4 bg-muted text-sm">
-                        {t("reservation.investment.units.months")}
-                      </span>
-                    </div>
+
+                    <Input
+                      inputMode="numeric"
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          investmentDuration: e.target.value,
+                        })
+                      }
+                    />
+
                     <FieldError>{errors.investmentDuration}</FieldError>
                   </Field>
 
                   <Field>
                     <FieldLabel>
-                      {t("reservation.investment.fields.financialProposal")}{" "}
-                      <span className="text-destructive">*</span>
+                      {t("reservation.investment.fields.financialProposal")}
                     </FieldLabel>
-                    <div
-                      className={cn(
-                        "flex rounded-lg overflow-hidden border",
-                        errors.financialProposal && "border-red-500",
-                      )}
-                    >
-                      <Input
-                        inputMode="numeric"
-                        className="border-0 focus-visible:ring-0"
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            financialProposal: e.target.value,
-                          })
-                        }
-                      />
-                      <span className="flex items-center px-4 bg-muted text-sm">
-                        {t("reservation.investment.units.jod")}
-                      </span>
-                    </div>
+
+                    <Input
+                      inputMode="numeric"
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          financialProposal: e.target.value,
+                        })
+                      }
+                    />
+
                     <FieldError>{errors.financialProposal}</FieldError>
                   </Field>
                 </div>
               </div>
 
               {/* DOCUMENTS */}
-              <div className="bg-white rounded-xl p-5 shadow-sm border">
+              <div className="bg-card rounded-xl p-5 shadow-sm border border-border">
                 <h2 className="text-lg font-semibold mb-6">
                   {t("reservation.investment.sections.documents")}
                 </h2>
 
                 <div className="grid md:grid-cols-2 gap-6">
-                  {[
-                    "operationalPlan",
-                    "feasibilityStudy",
-                    "presentation",
-                    "financialSolvency",
-                  ].map((field) => (
-                    <Field key={field}>
-                      <FieldLabel htmlFor={field}>
-                        {t(`reservation.investment.fields.${field}`)}{" "}
-                        <span className="text-destructive">*</span>
-                      </FieldLabel>
+                  <FileUpload
+                    id="operationalPlan"
+                    label={t("reservation.investment.fields.operationalPlan")}
+                    file={form.operationalPlan as File}
+                    error={errors.operationalPlan}
+                    onChange={(file) =>
+                      setForm((prev) => ({ ...prev, operationalPlan: file }))
+                    }
+                  />
 
-                      {/* Upload Box */}
-                      <label
-                        htmlFor={field}
-                        className={cn(
-                          "flex flex-col items-center justify-center w-full p-6 border-2 border-dashed rounded-lg cursor-pointer bg-blue-50 hover:bg-blue-100 transition",
-                          errors[field] ? "border-red-500" : "border-primary",
-                        )}
-                      >
-                        <div className="flex flex-col items-center gap-2 text-primary">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="w-8 h-8"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={1.5}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M12 16v-8m0 0l-3 3m3-3l3 3m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1"
-                            />
-                          </svg>
+                  <FileUpload
+                    id="feasibilityStudy"
+                    label={t("reservation.investment.fields.feasibilityStudy")}
+                    file={form.feasibilityStudy as File}
+                    error={errors.feasibilityStudy}
+                    onChange={(file) =>
+                      setForm((prev) => ({ ...prev, feasibilityStudy: file }))
+                    }
+                  />
 
-                          <span className="text-sm font-medium">
-                            {t("auth.chooseFile")}
-                          </span>
+                  <FileUpload
+                    id="presentation"
+                    label={t("reservation.investment.fields.presentation")}
+                    file={form.presentation as File}
+                    error={errors.presentation}
+                    onChange={(file) =>
+                      setForm((prev) => ({ ...prev, presentation: file }))
+                    }
+                  />
 
-                          <span className="text-xs text-muted-foreground">
-                            PDF, JPG, PNG
-                          </span>
-
-                          {form[field as keyof InvestmentFormData] && (
-                            <p className="mt-2 text-sm text-gray-700">
-                              {t("common.selectedFile")}:{" "}
-                              <strong>
-                                {
-                                  (
-                                    form[
-                                      field as keyof InvestmentFormData
-                                    ] as File
-                                  )?.name
-                                }
-                              </strong>
-                            </p>
-                          )}
-                        </div>
-                      </label>
-
-                      {/* Hidden Input */}
-                      <Input
-                        id={field}
-                        type="file"
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (!file) return;
-
-                          setForm((prev) => ({
-                            ...prev,
-                            [field]: file,
-                          }));
-                        }}
-                        className="hidden"
-                      />
-
-                      <FieldError>{errors[field]}</FieldError>
-                    </Field>
-                  ))}
+                  <FileUpload
+                    id="financialSolvency"
+                    label={t("reservation.investment.fields.financialSolvency")}
+                    file={form.financialSolvency as File}
+                    error={errors.financialSolvency}
+                    onChange={(file) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        financialSolvency: file,
+                      }))
+                    }
+                  />
                 </div>
               </div>
+
               {/* ACTIONS */}
               <div className="flex gap-4 pt-2">
                 <Button
