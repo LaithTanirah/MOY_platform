@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, User } from "lucide-react";
 
 type servicesType = {
   title: string;
@@ -47,13 +47,37 @@ export default function ServiceSelector({
       {...props}
     >
       <Card className="w-full max-w-5xl rounded-2xl shadow-lg overflow-hidden p-0">
-        <div className="bg-primary text-white text-center px-6 md:px-10 py-10 md:py-12 rounded-t-2xl">
-          <h1 className="text-2xl md:text-3xl font-bold">
-            {t("services.pageTitle")}
-          </h1>
-          <p className="mt-3 text-sm md:text-base opacity-90">
-            {t("services.pageSubtitle")}
-          </p>
+        {/* HEADER */}
+        <div className="relative bg-primary text-white text-center px-6 md:px-10 py-10 md:py-12 rounded-t-2xl flex items-center justify-between">
+          <div className="flex-1">
+            <h1 className="text-2xl md:text-3xl font-bold">
+              {t("services.pageTitle")}
+            </h1>
+            <p className="mt-3 text-sm md:text-base opacity-90">
+              {t("services.pageSubtitle")}
+            </p>
+          </div>
+          <div className="relative group ml-4 flex flex-col items-center">
+            <button
+              onClick={() => navigate("/user/individual-profile")}
+              className="relative flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-500 text-white
+               border-2 border-white shadow-lg transition-transform duration-300 transform 
+               hover:scale-110 
+               hover:shadow-[0_0_30px_rgba(16,185,129,0.6),0_0_50px_rgba(16,185,129,0.5),0_0_70px_rgba(16,185,129,0.4)]"
+              style={{ marginTop: "8px" }}
+              title={t("profile.personal")}
+            >
+              <User className="w-8 h-8" />
+            </button>
+
+            <span
+              className="absolute bottom-[calc(100%+4px)] px-3 py-1 rounded-md bg-white text-primary font-semibold text-xs opacity-0
+                   group-hover:opacity-100 group-hover:translate-y-[-2px]
+                   transition-all duration-300 shadow-lg"
+            >
+              {t("profile.personal")}
+            </span>
+          </div>
         </div>
 
         {/* BODY */}
@@ -76,7 +100,7 @@ export default function ServiceSelector({
               {t("services.availableTitle")}
             </h3>
 
-            {/* MAIN SERVICE */}
+            {/* MAIN SERVICES */}
             {services.map((service, index) => (
               <button
                 key={index}
