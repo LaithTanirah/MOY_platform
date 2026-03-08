@@ -108,7 +108,7 @@ export function LoginForm({
       const res = await login(formData);
       if (res?.token) localStorage.setItem("authToken", res.token);
       toast.success(t("auth.loginSuccess"));
-      navigate("/user/business-profile");
+      navigate("/user/services");
     } catch (error) {
       toast.error(t("auth.loginFailed"));
       console.log(error);
@@ -127,7 +127,7 @@ export function LoginForm({
       const res = await GovLogin(formData);
       if (res?.token) localStorage.setItem("authToken", res.token);
       toast.success(t("auth.loginSuccess"));
-      navigate("/user/goverment-profile");
+      navigate("/user/services");
     } catch (error) {
       toast.error(t("auth.loginFailed"));
       console.log(error);
