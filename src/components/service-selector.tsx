@@ -76,7 +76,7 @@ export default function ServiceSelector({
           <div className="relative group ml-4 flex flex-col items-center">
             <button
               onClick={() => navigate("/user/individual-profile")}
-              className="relative flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-500 text-white
+              className="relative flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-tr from-emerald-500 to-cyan-500 text-white
                border-2 border-white shadow-lg transition-transform duration-300 transform 
                hover:scale-110 
                hover:shadow-[0_0_30px_rgba(16,185,129,0.6),0_0_50px_rgba(16,185,129,0.5),0_0_70px_rgba(16,185,129,0.4)]"
@@ -88,7 +88,7 @@ export default function ServiceSelector({
 
             <span
               className="absolute bottom-[calc(100%+4px)] px-3 py-1 rounded-md bg-white text-primary font-semibold text-xs opacity-0
-                   group-hover:opacity-100 group-hover:translate-y-[-2px]
+                   group-hover:opacity-100 group-hover:-translate-y-0.5
                    transition-all duration-300 shadow-lg"
             >
               {t("profile.personal")}

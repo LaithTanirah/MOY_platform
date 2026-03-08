@@ -55,8 +55,8 @@ const routes = createBrowserRouter([
   },
 
   {
-    path: "/user/individual-profile",
-    element: <IndividualProfile />,
+    path: "/user/services",
+    element: <ServicesPage />,
   },
 
   {
@@ -64,10 +64,6 @@ const routes = createBrowserRouter([
     element: <ProtectedLayout />,
     loader: protectedLoader,
     children: [
-      {
-        path: "services",
-        element: <ServicesPage />,
-      },
       {
         path: "youthHouse",
         element: <YouthHousePage />,
@@ -83,6 +79,10 @@ const routes = createBrowserRouter([
       {
         path: "Service-Requests",
         element: <ServiceRequestsPage />,
+      },
+      {
+        path: "individual-profile",
+        element: <IndividualProfile />,
       },
       {
         path: "goverment-profile",

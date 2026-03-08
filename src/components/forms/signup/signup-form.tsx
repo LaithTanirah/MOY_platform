@@ -261,12 +261,13 @@ export default function SignupForm({
     () => [
       { value: "company", label: t("auth.company") },
       { value: "association", label: t("auth.association") },
-      { value: "sole_establishment", label: t("auth.sole_establishment") },
       { value: "cooperative", label: t("auth.cooperative") },
+      { value: "sole_establishment", label: t("auth.sole_establishment") },
       { value: "free_zone", label: t("auth.free_zones_establishments") },
     ],
     [t],
   );
+
   const roleOptions: Option<delegateRoleType>[] = useMemo(
     () => [
       { value: "owner", label: t("auth.owner") },

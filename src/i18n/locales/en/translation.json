@@ -51,6 +51,7 @@
     "companySector": "Organization Type",
     "chooseFile": "Click to upload a file",
     "orgNationalIdPlaceholder": "Enter organization national ID",
+    "govIdPlaceholder": "Enter organization identification number",
     "passwordPlaceholder": "Enter password",
     "confirmPasswordPlaceholder": "Re-enter your password",
     "orgPhone": "Organization Phone Number",

@@ -355,7 +355,7 @@ export function LoginForm({
                         govFormErrors.ID && "border-red-500",
                       )}
                       maxLength={9}
-                      placeholder={t("auth.orgNationalIdPlaceholder")}
+                      placeholder={t("auth.govIdPlaceholder")}
                     />
                     <FieldError>{govFormErrors.ID}</FieldError>
                   </Field>
