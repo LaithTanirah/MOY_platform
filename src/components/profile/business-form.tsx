@@ -34,7 +34,6 @@ export default function BusinessForm({
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       },
     })
       .then((res) => {
