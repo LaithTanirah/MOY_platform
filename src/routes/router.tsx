@@ -53,6 +53,7 @@ const routes = createBrowserRouter([
       },
     ],
   },
+
   {
     path: "/user/services",
     element: <ServicesPage />,
@@ -94,6 +95,10 @@ const routes = createBrowserRouter([
       {
         path: "investment",
         element: <InvestmentPage />,
+      },
+      {
+        path: "services",
+        element: <ServicesPage />,
       },
     ],
   },
