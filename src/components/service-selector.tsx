@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect } from "react";
 
 type servicesType = {
   title: string;
@@ -37,6 +38,21 @@ export default function ServiceSelector({
       action: () => navigate("/user/investment"),
     },
   ];
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  function clearQuery() {
+    setSearchParams({}, { replace: true });
+  }
+  useEffect(() => {
+    if (token) {
+      // Store the token in localStorage or a cookie
+      localStorage.setItem("authToken", token);
+      // Clear the query parameters from the URL
+      clearQuery();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div

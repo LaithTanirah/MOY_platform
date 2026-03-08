@@ -39,6 +39,7 @@ export function LoginForm({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [userType, setUserType] = useState<UserType>("individual");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const schema = formSchema(t);
   type formType = z.infer<typeof schema>;
@@ -101,6 +102,8 @@ export function LoginForm({
     e.preventDefault();
     if (!validate()) return;
 
+    setIsSubmitting(true);
+
     const formData = new FormData();
     formData.append("Institutions_NID", form.ID);
     formData.append("Password", form.password);
@@ -108,16 +111,20 @@ export function LoginForm({
       const res = await login(formData);
       if (res?.token) localStorage.setItem("authToken", res.token);
       toast.success(t("auth.loginSuccess"));
-      navigate("/user/business-profile");
+      navigate("/user/services");
     } catch (error) {
       toast.error(t("auth.loginFailed"));
       console.log(error);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   async function handleGovLogin(e: React.FormEvent) {
     e.preventDefault();
     if (!govValidate()) return;
+
+    setIsSubmitting(true);
 
     const formData = new FormData();
     formData.append("Institutions_NID", govForm.ID);
@@ -127,17 +134,19 @@ export function LoginForm({
       const res = await GovLogin(formData);
       if (res?.token) localStorage.setItem("authToken", res.token);
       toast.success(t("auth.loginSuccess"));
-      navigate("/user/goverment-profile");
+      navigate("/user/services");
     } catch (error) {
       toast.error(t("auth.loginFailed"));
       console.log(error);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   function handleSanad(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     window.location.assign(
-      "http://10.0.82.105:1125/api/SanadSignleSignon/Auth?returnUrl=/user/individual-profile",
+      "http://10.0.82.105:1125/api/SanadSignleSignon/Auth?returnUrl=/user/services",
     );
   }
 
@@ -303,8 +312,12 @@ export function LoginForm({
 
                   {/* SUBMIT */}
                   <Field className="mt-3">
-                    <Button className="w-full py-4" type="submit">
-                      {t("auth.login")}
+                    <Button
+                      className="w-full py-4"
+                      type="submit"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? t("auth.Loggingin") : t("auth.login")}
                     </Button>
 
                     <FieldDescription className="text-center">
@@ -374,8 +387,12 @@ export function LoginForm({
 
                   {/* SUBMIT */}
                   <Field className="mt-3">
-                    <Button className="w-full py-4" type="submit">
-                      {t("auth.login")}
+                    <Button
+                      className="w-full py-4"
+                      type="submit"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? t("auth.Loggingin") : t("auth.login")}
                     </Button>
 
                     <FieldDescription className="text-center">

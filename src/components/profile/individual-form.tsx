@@ -7,7 +7,7 @@ import { User } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { Textarea } from "../ui/textarea";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type sanadDataType = {
   mail: string;
@@ -21,23 +21,10 @@ export default function IndividualForm({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [edit, setEdit] = useState(false);
+  // const [edit, setEdit] = useState(false);
   const [data, setData] = useState<sanadDataType>();
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const token = searchParams.get("token");
-  function clearQuery() {
-    setSearchParams({}, { replace: true });
-  }
-  useEffect(() => {
-    if (token) {
-      // Store the token in localStorage or a cookie
-      localStorage.setItem("authToken", token);
-      // Clear the query parameters from the URL
-      clearQuery();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const token = localStorage.getItem("authToken");
 
   useEffect(() => {
     fetch("http://10.0.82.105:1125/api/Login/profile", {
@@ -64,7 +51,7 @@ export default function IndividualForm({
   }, []);
 
   const handleEdit = () => {
-    setEdit(true);
+    // setEdit(true);
   };
 
   const handeleServiceBtn = () => {

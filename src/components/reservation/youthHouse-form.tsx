@@ -61,6 +61,7 @@ const formSchema = (t: any) =>
         .optional(),
       startTime: z.string().optional(),
       endTime: z.string().optional(),
+      dateSingle: z.date().optional(),
 
       beneficiaries: z
         .number(t("errors.digitsOnly"))
@@ -100,10 +101,18 @@ const formSchema = (t: any) =>
         });
       }
 
-      if (!data.dateRange) {
+      if (data.serviceType !== "activity" && !data.dateRange) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["dateRange"],
+          message: t("errors.date"),
+        });
+      }
+
+      if (data.serviceType === "activity" && !data.dateSingle) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["dateSingle"],
           message: t("errors.date"),
         });
       }
@@ -246,6 +255,7 @@ export default function YouthHouse({
     dateRange: undefined,
     startTime: undefined,
     endTime: undefined,
+    dateSingle: undefined,
 
     beneficiaries: undefined,
 
@@ -568,6 +578,7 @@ export default function YouthHouse({
                   </h2>
                 </div>
               </div>
+
               {/* Types */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* House type */}
@@ -629,6 +640,8 @@ export default function YouthHouse({
                         discountCheck: false,
                         discountNumber: undefined,
                         discountDate: undefined,
+                        dateRange: undefined,
+                        dateSingle: undefined,
                       }))
                     }
                     dir={t("dir")}
@@ -726,15 +739,21 @@ export default function YouthHouse({
                         className="justify-start px-2.5 font-normal not-dark:bg-white"
                       >
                         <CalendarIcon />
-                        {form.dateRange?.from ? (
-                          form.dateRange.to ? (
-                            <>
-                              {format(form.dateRange.from, "LLL dd, y")} -{" "}
-                              {format(form.dateRange.to, "LLL dd, y")}
-                            </>
+                        {form.serviceType !== "activity" ? (
+                          form.dateRange?.from ? (
+                            form.dateRange.to ? (
+                              <>
+                                {format(form.dateRange.from, "LLL dd, y")} -{" "}
+                                {format(form.dateRange.to, "LLL dd, y")}
+                              </>
+                            ) : (
+                              format(form.dateRange.from, "LLL dd, y")
+                            )
                           ) : (
-                            format(form.dateRange.from, "LLL dd, y")
+                            <span>{t("reservation.fields.PickDate")}</span>
                           )
+                        ) : form.dateSingle ? (
+                          format(form.dateSingle, "LLL dd, y")
                         ) : (
                           <span>{t("reservation.fields.PickDate")}</span>
                         )}
@@ -744,78 +763,101 @@ export default function YouthHouse({
                       className="w-auto p-0 max-h-[60vh] overflow-y-auto"
                       align="start"
                     >
-                      <Calendar
-                        mode="range"
-                        selected={form.dateRange}
-                        onSelect={(value) =>
-                          setForm((prev) => ({
-                            ...prev,
-                            dateRange: value as formType["dateRange"],
-                          }))
-                        }
-                        fromMonth={today}
-                        toMonth={maxDate}
-                        numberOfMonths={2}
-                        disabled={{
-                          before: today,
-                          after: maxDate,
-                        }}
-                        required
-                      />
-                      <FieldGroup className="bg-card border-t py-3 px-7">
-                        <Field>
-                          <FieldLabel htmlFor="time-from">
-                            {t("reservation.fields.startTime")}
-                          </FieldLabel>
-                          <InputGroup className="p-2">
-                            <InputGroupInput
-                              id="time-from"
-                              type="time"
-                              step={60}
-                              value={form.startTime}
-                              onChange={(e) =>
-                                setForm((prev) => ({
-                                  ...prev,
-                                  startTime: e.target.value,
-                                }))
-                              }
-                              className="appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                              onClick={(e) =>
-                                (e.target as HTMLInputElement).showPicker()
-                              }
-                            />
-                            <InputGroupAddon>
-                              <Clock2Icon className="text-muted-foreground" />
-                            </InputGroupAddon>
-                          </InputGroup>
-                        </Field>
-                        <Field>
-                          <FieldLabel htmlFor="time-to">
-                            {t("reservation.fields.endTime")}
-                          </FieldLabel>
-                          <InputGroup className="p-2">
-                            <InputGroupInput
-                              id="time-to"
-                              type="time"
-                              step={60}
-                              className="appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                              onClick={(e) =>
-                                (e.target as HTMLInputElement).showPicker()
-                              }
-                              value={form.endTime}
-                              onChange={(e) =>
-                                setForm((prev) => ({
-                                  ...prev,
-                                  endTime: e.target.value,
-                                }))
-                              }
-                            />
-                            <InputGroupAddon>
-                              <Clock2Icon className="text-muted-foreground" />
-                            </InputGroupAddon>
-                          </InputGroup>
-                        </Field>
-                      </FieldGroup>
+                      {form.serviceType !== "activity" ? (
+                        <Calendar
+                          mode="range"
+                          selected={form.dateRange}
+                          onSelect={(value) =>
+                            setForm((prev) => ({
+                              ...prev,
+                              dateRange: value as formType["dateRange"],
+                            }))
+                          }
+                          fromMonth={today}
+                          toMonth={maxDate}
+                          numberOfMonths={2}
+                          disabled={{
+                            before: today,
+                            after: maxDate,
+                          }}
+                          required
+                        />
+                      ) : (
+                        <Calendar
+                          mode="single"
+                          selected={form.dateSingle}
+                          onSelect={(value) =>
+                            setForm((prev) => ({
+                              ...prev,
+                              dateSingle: value,
+                            }))
+                          }
+                          fromMonth={today}
+                          toMonth={maxDate}
+                          numberOfMonths={1}
+                          disabled={{
+                            before: today,
+                            after: maxDate,
+                          }}
+                          required
+                        />
+                      )}
+                      {form.serviceType === "activity" && (
+                        <FieldGroup className="bg-card border-t py-3 px-7">
+                          <Field>
+                            <FieldLabel htmlFor="time-from">
+                              {t("reservation.fields.startTime")}
+                            </FieldLabel>
+                            <InputGroup className="p-2">
+                              <InputGroupInput
+                                id="time-from"
+                                type="time"
+                                step={60}
+                                value={form.startTime}
+                                onChange={(e) =>
+                                  setForm((prev) => ({
+                                    ...prev,
+                                    startTime: e.target.value,
+                                  }))
+                                }
+                                className="appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                                onClick={(e) =>
+                                  (e.target as HTMLInputElement).showPicker()
+                                }
+                              />
+                              <InputGroupAddon>
+                                <Clock2Icon className="text-muted-foreground" />
+                              </InputGroupAddon>
+                            </InputGroup>
+                          </Field>
+                          <Field>
+                            <FieldLabel htmlFor="time-to">
+                              {t("reservation.fields.endTime")}
+                            </FieldLabel>
+                            <InputGroup className="p-2">
+                              <InputGroupInput
+                                id="time-to"
+                                type="time"
+                                step={60}
+                                className="appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                                onClick={(e) =>
+                                  (e.target as HTMLInputElement).showPicker()
+                                }
+                                value={form.endTime}
+                                onChange={(e) =>
+                                  setForm((prev) => ({
+                                    ...prev,
+                                    endTime: e.target.value,
+                                  }))
+                                }
+                              />
+                              <InputGroupAddon>
+                                <Clock2Icon className="text-muted-foreground" />
+                              </InputGroupAddon>
+                            </InputGroup>
+                          </Field>
+                        </FieldGroup>
+                      )}
                     </PopoverContent>
                   </Popover>
                   <FieldError>{formErrors.dateRange}</FieldError>
