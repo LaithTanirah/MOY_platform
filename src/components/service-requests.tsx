@@ -132,14 +132,12 @@ export default function ServiceRequests({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  // 🔥 جلب البيانات من الترجمة مباشرة
   const samples = t("requests.samples", { returnObjects: true }) as any;
   const investmentSamples = t("requests.investmentSamples", {
     returnObjects: true,
   }) as any;
 
   const items: ServiceRequestItem[] = [
-    // الطلبات العادية
     ...["pending", "approved", "rejected", "canceled"].flatMap((statusKey) => {
       const list = samples[statusKey as keyof typeof samples] || [];
       const statusMap: Record<string, RequestStatus> = {
@@ -161,7 +159,6 @@ export default function ServiceRequests({
         toDate: "2026/01/23",
       }));
     }),
-    // الاستثمارات
     ...investmentSamples.map((item: any) => ({
       id: item.id,
       type: "INVESTMENT" as const,

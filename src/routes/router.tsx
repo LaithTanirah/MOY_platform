@@ -53,7 +53,10 @@ const routes = createBrowserRouter([
       },
     ],
   },
-
+  {
+    path: "/user/services",
+    element: <ServicesPage />,
+  },
   {
     path: "/user/services",
     element: <ServicesPage />,
