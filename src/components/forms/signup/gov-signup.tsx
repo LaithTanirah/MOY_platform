@@ -47,7 +47,7 @@ const formSchema = (t: any) =>
 
       RegistrationNumber: z
         .string()
-        .regex(/^\d{3}\/\d{3}$/, t("errors.digitsOnly")),
+        .regex(/^\d{3}\/\d{3}$/, t("errors.required")),
 
       delegateDateOfBirth: z.date().optional(),
       JobTitle: z.string().min(1, t("errors.required")),

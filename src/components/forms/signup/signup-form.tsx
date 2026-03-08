@@ -10,7 +10,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { CalendarIcon, LogIn } from "lucide-react";
+import { UserRound, CalendarIcon, LogIn } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
@@ -142,33 +142,6 @@ export default function SignupForm({
   const schema = formSchema(t);
   type formType = z.infer<typeof schema>;
   type FormErrors = Partial<Record<keyof formType, string>>;
-
-  const [open, setOpen] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
-  const [showError, setShowError] = useState(false);
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const queryToken = searchParams.get("token");
-
-  // Local state to keep token even after clearing query params
-  const [localToken, setLocalToken] = useState<string | null>(null);
-  const [tokenReady, setTokenReady] = useState(false);
-
-  function clearQuery() {
-    setSearchParams({}, { replace: true });
-  }
-
-  useEffect(() => {
-    if (queryToken) {
-      setLocalToken(queryToken);
-      localStorage.setItem("signUpToken", queryToken);
-      clearQuery();
-    }
-    setTokenReady(true);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryToken]);
-
   // Form state
   const [form, setForm] = useState<formType>({
     delegateName: "",
@@ -187,8 +160,43 @@ export default function SignupForm({
     orgPhone: "",
     file: undefined,
   });
+
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [open, setOpen] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+  const [showError, setShowError] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryToken = searchParams.get("token");
+
+  // Local state to keep token even after clearing query params
+  const [localToken, setLocalToken] = useState<string | null>(null);
+  const [tokenReady, setTokenReady] = useState(false);
+  const [verification, setVerification] = useState(false);
+
+  const showWrittenAttachment = form.delegateRole === "written";
+
+  function handleVerification() {
+    setVerification(true);
+    toast.success(t("auth.verificationSuccess"));
+  }
+
+  function clearQuery() {
+    setSearchParams({}, { replace: true });
+  }
+
+  useEffect(() => {
+    if (queryToken) {
+      setLocalToken(queryToken);
+      localStorage.setItem("signUpToken", queryToken);
+      clearQuery();
+    }
+    setTokenReady(true);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryToken]);
 
   // Profile fetched from API
   interface Profile {
@@ -267,10 +275,7 @@ export default function SignupForm({
     ],
     [t],
   );
-  const associationRoleOptions: Option<delegateRoleType>[] = useMemo(
-    () => [{ value: "written", label: t("auth.writtenDelegate") }],
-    [t],
-  );
+
   // const nationalityOptions: Option<delegateNationalityType>[] = useMemo(
   //   () => [
   //     { value: "jordanian", label: t("auth.jordanian") },
@@ -344,14 +349,6 @@ export default function SignupForm({
       setIsSubmitting(false);
     }
   }
-  const showWrittenAttachment = form.delegateRole === "written";
-  const showAssociationRole =
-    form.companySector === "association" ||
-    form.companySector === "cooperative";
-
-  useEffect(() => {
-    console.log(form.orgDate);
-  }, [form.orgDate]);
 
   return (
     <div
@@ -374,6 +371,15 @@ export default function SignupForm({
           <CardContent className="px-6 py-2 md:p-8 md:py-4">
             <form onSubmit={handleSubmit}>
               <FieldGroup>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <UserRound className="h-5 w-5 text-primary" />
+                    <h2 className="text-lg font-semibold">
+                      {t("auth.delegateData")}
+                    </h2>
+                  </div>
+                </div>
+
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Name */}
                   <Field>
@@ -547,17 +553,11 @@ export default function SignupForm({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        {showAssociationRole
-                          ? associationRoleOptions.map((o) => (
-                              <SelectItem key={o.value} value={o.value}>
-                                {o.label}
-                              </SelectItem>
-                            ))
-                          : roleOptions.map((o) => (
-                              <SelectItem key={o.value} value={o.value}>
-                                {o.label}
-                              </SelectItem>
-                            ))}
+                        {roleOptions.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -635,11 +635,6 @@ export default function SignupForm({
                       setForm((prev) => ({
                         ...prev,
                         companySector: value as companySectorType,
-
-                        delegateRole:
-                          value === "cooperative" || value === "association"
-                            ? "written"
-                            : prev.delegateRole,
                       }))
                     }
                     dir={t("dir")}
@@ -774,19 +769,34 @@ export default function SignupForm({
                   </Field>
                 </FieldGroup>
 
-                <Field>
-                  <FieldLabel htmlFor="orgNationalName">
-                    {t("auth.organizationName")}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input
-                    id="orgNationalName"
-                    type="string"
-                    value={form.orgNationalName}
-                    readOnly
-                    className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
-                  />
-                </Field>
+                {!verification && (
+                  <Field className="mx-auto">
+                    <Button
+                      className="w-full py-4"
+                      type="button"
+                      onClick={handleVerification}
+                    >
+                      {t("auth.verification")}
+                    </Button>
+                  </Field>
+                )}
+
+                {/* Name */}
+                {verification && (
+                  <Field>
+                    <FieldLabel htmlFor="orgNationalName">
+                      {t("auth.organizationName")}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="orgNationalName"
+                      type="string"
+                      value={form.orgNationalName}
+                      readOnly
+                      className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
+                    />
+                  </Field>
+                )}
 
                 {/* terms checkBox */}
                 <FieldGroup className="mx-auto" dir={t("dir")}>
@@ -825,7 +835,7 @@ export default function SignupForm({
                   <Button
                     type="submit"
                     className="w-full py-6 text-base"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !verification}
                   >
                     {isSubmitting ? t("auth.signingup") : t("auth.signup")}
                   </Button>

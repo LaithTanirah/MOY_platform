@@ -17,6 +17,7 @@
     "orgNationalId": "Organization national ID",
     "govId": "Organization Identification Number",
     "login": "Login",
+    "Loggingin": "Logging in...",
     "password": "Password",
     "noaccount": "Don't have an account?",
     "account": "Already have an account?",
@@ -79,7 +80,9 @@
     "termsDesc": "I confirm that the information I have provided is accurate, and I consent to the retrieval and processing of my personal data by the courts and the company's data protection authorities for the purpose of providing the service.",
     "acceptTerms": "You must accept the terms and conditions to proceed.",
     "verification": "Information verification",
-    "verificationSuccess": "Verification successful! You can now submit the form."
+    "verificationSuccess": "Verification successful! You can now submit the form.",
+    "verificationFailed": "Verification failed. Please check the entered information and try again.",
+    "delegateData": "Delegate data"
   },
   "errors": {
     "required": "This field is required",
