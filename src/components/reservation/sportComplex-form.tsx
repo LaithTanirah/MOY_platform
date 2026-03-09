@@ -373,7 +373,7 @@ export default function SportComplex({
               <Card
                 className="group mt-8 relative overflow-hidden rounded-2xl 
                             border border-blue-200/40 
-                            bg-gradient-to-br from-blue-50/70 via-white/60 to-blue-100/40 
+                            bg-linear-to-br from-blue-50/70 via-white/60 to-blue-100/40 
                             backdrop-blur-xl 
                             shadow-lg 
                             transition-all duration-500 ease-out

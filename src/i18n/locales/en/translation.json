@@ -11,6 +11,14 @@
     "name": "Footer",
     "rights": "All rights reserved"
   },
+  "otp": {
+    "title": "Verify Your Account",
+    "description": "Enter the 6-digit code sent to your Phone to verify your account.",
+    "resend": "Resend Code",
+    "verify": "Verify Code",
+    "verifying": "Verifying...",
+    "warrant": "The verification code will expire in 5 minutes"
+  },
   "auth": {
     "nationalId": "National / Personal ID",
     "nationalIdPlaceholder": "Enter national or personal ID",
@@ -83,7 +91,8 @@
     "verification": "Information verification",
     "verificationSuccess": "Verification successful! You can now submit the form.",
     "verificationFailed": "Verification failed. Please check the entered information and try again.",
-    "delegateData": "Delegate data"
+    "delegateData": "Delegate data",
+    "changePassword": "Forget password?"
   },
   "errors": {
     "required": "This field is required",
