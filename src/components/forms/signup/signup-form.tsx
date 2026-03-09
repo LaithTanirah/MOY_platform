@@ -342,7 +342,7 @@ export default function SignupForm({
       toast.success(t("auth.orgSuccessDelay"), {
         duration: 20000, // 20 second
       });
-      navigate("/auth/login");
+      navigate("/auth/OTP");
     } catch (error) {
       toast.error(t("auth.registerFailed"));
       console.log("error" + error);

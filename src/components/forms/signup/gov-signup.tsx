@@ -160,7 +160,7 @@ export default function GovSignupForm({
       await register(formData);
 
       toast.success(t("auth.registerSuccess"));
-      navigate("/auth/login");
+      navigate("/auth/OTP");
     } catch (error) {
       toast.error(t("auth.registerFailed"));
       console.log("error" + error);

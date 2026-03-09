@@ -1,5 +1,4 @@
-// src/pages/service-requests.tsx
-import ServiceRequests from "@/components/service-requests";
+import ServiceRequests from "@/components/screens/service-requests";
 
 export default function ServiceRequestsPage() {
   return <ServiceRequests />;
