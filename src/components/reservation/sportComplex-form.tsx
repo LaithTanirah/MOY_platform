@@ -9,7 +9,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { CalendarDays, Hotel, User } from "lucide-react";
+import { CalendarDays, Hotel } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/input-group";
 import { Clock2Icon } from "lucide-react";
 import { z } from "zod";
+import UserInfoCard from "../custom/user-info-card";
 type Option = { value: string; label: string };
 // type complexType = "" | "youthCenter" | "sportComplex";
 // type serviceType = "" | "activity";
@@ -369,61 +370,8 @@ export default function SportComplex({
         <CardContent className="p-6">
           <form onSubmit={handleSubmit}>
             <FieldGroup>
-              {/* ================= BENEFICIARY INFO CARD ================= */}
-              <Card
-                className="group mt-8 relative overflow-hidden rounded-2xl 
-                            border border-blue-200/40 
-                            bg-linear-to-br from-blue-50/70 via-white/60 to-blue-100/40 
-                            backdrop-blur-xl 
-                            shadow-lg 
-                            transition-all duration-500 ease-out
-                            hover:-translate-y-1 hover:shadow-2xl hover:border-primary/40"
-              >
-                {/* soft floating glow */}
-                <div className="absolute -top-24 -right-24 w-80 h-80 bg-primary/20 rounded-full blur-3xl opacity-30 transition-all duration-500 group-hover:opacity-50" />
-                <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-blue-300/20 rounded-full blur-3xl opacity-20 transition-all duration-500 group-hover:opacity-40" />
-
-                <CardContent className="relative p-8">
-                  <div className="flex items-center justify-between flex-wrap gap-6">
-                    {/* Left Section */}
-                    <div className="flex items-center gap-6">
-                      {/* Avatar */}
-                      <div className="relative transition-all duration-500 group-hover:scale-105">
-                        <div
-                          className="w-20 h-20 rounded-full 
-                                    bg-white/60 backdrop-blur-md 
-                                    flex items-center justify-center 
-                                    ring-4 ring-primary/20 
-                                    shadow-md 
-                                    transition-all duration-500 
-                                    group-hover:ring-primary/40 group-hover:shadow-xl"
-                        >
-                          <User className="h-10 w-10 text-primary transition-all duration-500 group-hover:scale-110" />
-                        </div>
-
-                        {/* Active dot */}
-                        <span className="absolute bottom-1 right-1 w-4 h-4 bg-emerald-400 border-2 border-white rounded-full" />
-                      </div>
-
-                      {/* Info */}
-                      <div className="space-y-1">
-                        <p className="text-xs uppercase tracking-widest text-primary/80">
-                          {t("reservation.sections.personal")}
-                        </p>
-
-                        <h3 className="text-2xl font-bold text-slate-800 tracking-wide">
-                          {t("shared.beneficiaryName")}
-                        </h3>
-
-                        <p className="text-sm text-slate-500">
-                          ليث احمد ابراهيم تنيره
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
+              {/* USER CARD */}
+              <UserInfoCard name="ليث احمد ابراهيم تنيره" />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <CalendarDays className="h-5 w-5 text-primary" />

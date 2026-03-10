@@ -8,12 +8,13 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Briefcase, User } from "lucide-react";
+import { Briefcase } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import FileUpload from "@/components/ui/file-upload";
+import FileUpload from "@/components/custom/file-upload";
 import { z } from "zod";
+import UserInfoCard from "../custom/user-info-card";
 
 const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
 
@@ -123,75 +124,7 @@ export default function InvestmentForm({ className }: { className?: string }) {
           <form onSubmit={handleSubmit}>
             <FieldGroup className="space-y-6">
               {/* USER CARD */}
-              <Card
-                className="
-                            group relative overflow-hidden rounded-2xl
-                            border border-border
-                            bg-background/70
-                            backdrop-blur-xl
-                            shadow-md
-                            transition-all duration-500
-                            hover:-translate-y-1 hover:shadow-2xl
-                          "
-              >
-                {/* gradient border glow */}
-                <div
-                  className="
-                              absolute inset-0 rounded-2xl opacity-0
-                              bg-gradient-to-r from-primary/30 via-primary/10 to-primary/30
-                              blur-xl transition duration-500
-                              group-hover:opacity-100
-                            "
-                />
-
-                {/* glass overlay */}
-                <div
-                  className="
-                              absolute inset-0 rounded-2xl
-                              bg-gradient-to-br from-transparent via-primary/5 to-transparent
-                              opacity-0 group-hover:opacity-100
-                              transition duration-500
-                            "
-                />
-
-                <CardContent className="relative px-6 py-4">
-                  <div className="flex items-center gap-6">
-                    {/* avatar */}
-                    <div className="relative">
-                      <div
-                        className="
-                                    w-16 h-16 rounded-full
-                                    bg-primary/10
-                                    flex items-center justify-center
-                                    ring-4 ring-primary/20
-                                    shadow-sm
-                                    transition group-hover:scale-105
-                                  "
-                      >
-                        <User className="h-8 w-8 text-primary" />
-                      </div>
-
-                      {/* status */}
-                      <span className="absolute bottom-1 right-1 w-3 h-3 bg-emerald-500 border-2 border-background rounded-full" />
-                    </div>
-
-                    {/* text */}
-                    <div className="space-y-1">
-                      <p className="text-xs uppercase tracking-widest text-primary/80">
-                        {t("reservation.sections.personal")}
-                      </p>
-
-                      <h3 className="text-xl font-bold text-foreground tracking-wide">
-                        {t("shared.beneficiaryName")}
-                      </h3>
-
-                      <p className="text-sm text-muted-foreground">
-                        ليث احمد ابراهيم تنيره
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <UserInfoCard name="ليث احمد ابراهيم تنيره" />
 
               {/* DETAILS */}
               <div className="bg-card rounded-xl p-5 shadow-sm border border-border">
