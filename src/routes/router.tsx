@@ -18,6 +18,8 @@ import SanadSignupPage from "@/pages/auth/sanad-signup";
 import GovSignupPage from "@/pages/auth/gov-signup";
 import InvestmentPage from "@/pages/reservation/Investment-page";
 import AuthLayout from "@/layouts/auth-layout";
+import OtpPage from "@/pages/auth/otp-page";
+import ForgotPasswordPage from "@/pages/auth/forget-password-page";
 
 const routes = createBrowserRouter([
   {
@@ -51,12 +53,20 @@ const routes = createBrowserRouter([
         path: "gov_signup",
         element: <GovSignupPage />,
       },
+      {
+        path: "OTP",
+        element: <OtpPage />,
+      },
+      {
+        path: "change-password",
+        element: <ForgotPasswordPage />,
+      },
     ],
   },
 
   {
-    path: "/user/individual-profile",
-    element: <IndividualProfile />,
+    path: "/user/services",
+    element: <ServicesPage />,
   },
 
   {
@@ -64,10 +74,6 @@ const routes = createBrowserRouter([
     element: <ProtectedLayout />,
     loader: protectedLoader,
     children: [
-      {
-        path: "services",
-        element: <ServicesPage />,
-      },
       {
         path: "youthHouse",
         element: <YouthHousePage />,
@@ -83,6 +89,10 @@ const routes = createBrowserRouter([
       {
         path: "Service-Requests",
         element: <ServiceRequestsPage />,
+      },
+      {
+        path: "individual-profile",
+        element: <IndividualProfile />,
       },
       {
         path: "goverment-profile",

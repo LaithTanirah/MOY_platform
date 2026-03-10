@@ -175,12 +175,12 @@ export function LoginForm({
               {/* USER TYPE TOGGLE */}
               <Field>
                 <FieldLabel>{t("form.userType")}</FieldLabel>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-2 min-h-10 max-h-12">
                   <button
                     type="button"
                     onClick={() => setUserType("individual")}
                     className={cn(
-                      "rounded-md border px-4 py-2 text-sm transition",
+                      "rounded-md border px-4 text-sm transition",
                       userType === "individual"
                         ? "bg-primary text-white"
                         : "bg-muted",
@@ -193,7 +193,7 @@ export function LoginForm({
                     type="button"
                     onClick={() => setUserType("organization")}
                     className={cn(
-                      "rounded-md border px-4 py- text-sm transition",
+                      "rounded-md border px-4 text-sm transition",
                       userType === "organization"
                         ? "bg-primary text-white"
                         : "bg-muted",
@@ -206,7 +206,7 @@ export function LoginForm({
                     type="button"
                     onClick={() => setUserType("government")}
                     className={cn(
-                      "rounded-md border px-4 py-2 text-sm transition",
+                      "rounded-md border px-4 text-sm transition",
                       userType === "government"
                         ? "bg-primary text-white"
                         : "bg-muted",
@@ -308,10 +308,16 @@ export function LoginForm({
                       placeholder={t("auth.passwordPlaceholder")}
                     />
                     <FieldError>{formErrors.password}</FieldError>
+                    <Link
+                      to="/auth/change-password"
+                      className="px-0 text-sm text-muted-foreground hover:text-primary w-fit"
+                    >
+                      {t("auth.changePassword")}
+                    </Link>
                   </Field>
 
                   {/* SUBMIT */}
-                  <Field className="mt-3">
+                  <Field className="mt-1">
                     <Button
                       className="w-full py-4"
                       type="submit"
@@ -355,7 +361,7 @@ export function LoginForm({
                         govFormErrors.ID && "border-red-500",
                       )}
                       maxLength={9}
-                      placeholder={t("auth.orgNationalIdPlaceholder")}
+                      placeholder={t("auth.govIdPlaceholder")}
                     />
                     <FieldError>{govFormErrors.ID}</FieldError>
                   </Field>
@@ -383,10 +389,17 @@ export function LoginForm({
                       placeholder={t("auth.passwordPlaceholder")}
                     />
                     <FieldError>{govFormErrors.password}</FieldError>
+
+                    <Link
+                      to="/auth/change-password"
+                      className="px-0 text-sm text-muted-foreground hover:text-primary"
+                    >
+                      {t("auth.changePassword")}
+                    </Link>
                   </Field>
 
                   {/* SUBMIT */}
-                  <Field className="mt-3">
+                  <Field className="mt-1">
                     <Button
                       className="w-full py-4"
                       type="submit"

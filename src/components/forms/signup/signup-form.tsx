@@ -261,12 +261,13 @@ export default function SignupForm({
     () => [
       { value: "company", label: t("auth.company") },
       { value: "association", label: t("auth.association") },
-      { value: "sole_establishment", label: t("auth.sole_establishment") },
       { value: "cooperative", label: t("auth.cooperative") },
+      { value: "sole_establishment", label: t("auth.sole_establishment") },
       { value: "free_zone", label: t("auth.free_zones_establishments") },
     ],
     [t],
   );
+
   const roleOptions: Option<delegateRoleType>[] = useMemo(
     () => [
       { value: "owner", label: t("auth.owner") },
@@ -341,7 +342,7 @@ export default function SignupForm({
       toast.success(t("auth.orgSuccessDelay"), {
         duration: 20000, // 20 second
       });
-      navigate("/auth/login");
+      navigate("/auth/OTP");
     } catch (error) {
       toast.error(t("auth.registerFailed"));
       console.log("error" + error);

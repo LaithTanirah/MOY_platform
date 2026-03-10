@@ -41,7 +41,7 @@ export default function IndividualForm({
         return res.json();
       })
       .then((json) => {
-        setData(json.datas);
+        setData(json.data);
         console.log(json);
       })
       .catch((err) => {
@@ -82,21 +82,20 @@ export default function IndividualForm({
         <CardContent className="p-6">
           <form>
             <FieldGroup>
+              {/* name */}
+              <Field>
+                <FieldLabel htmlFor="name">
+                  {t("profile.individual.name")}
+                </FieldLabel>
+                <Input
+                  id="name"
+                  value=". . ."
+                  readOnly
+                  className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
+                />
+              </Field>
               {/* user Data from API */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* name */}
-                <Field>
-                  <FieldLabel htmlFor="name">
-                    {t("profile.individual.name")}
-                  </FieldLabel>
-                  <Input
-                    id="name"
-                    value="name"
-                    readOnly
-                    className="bg-muted cursor-not-allowed"
-                  />
-                </Field>
-
                 {/* nationality */}
                 <Field>
                   <FieldLabel htmlFor="id">
@@ -104,37 +103,57 @@ export default function IndividualForm({
                   </FieldLabel>
                   <Input
                     id="id"
-                    value={data?.nationalId || "not found"}
+                    value=". . ."
                     readOnly
-                    className="bg-muted cursor-not-allowed"
+                    className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
                   />
                 </Field>
-              </FieldGroup>
 
-              {/* email and pass */}
-              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field>
                   <FieldLabel htmlFor="birth">
                     {t("profile.individual.birth")}
                   </FieldLabel>
                   <Input
                     id="birth"
-                    value="11/03/1995"
+                    value=". . ."
                     readOnly
-                    className="bg-muted cursor-not-allowed"
+                    className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
                   />
                 </Field>
+              </FieldGroup>
+
+              {/* email and pass */}
+              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* email */}
+                <Field>
+                  <FieldLabel htmlFor="email">
+                    {t("profile.individual.email")}
+                  </FieldLabel>
+                  <Input
+                    id="email"
+                    value={data?.mail || "not found"}
+                    readOnly
+                    className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
+                  />
+                </Field>
+
                 {/* phone number */}
                 <Field>
                   <FieldLabel htmlFor="phone">
                     {t("profile.individual.phone")}
                   </FieldLabel>
-                  <Input
-                    id="phone"
-                    value={data?.mobile || "not found"}
-                    readOnly
-                    className="bg-muted cursor-not-allowed"
-                  />
+                  <div dir="ltr" className="flex items-center">
+                    <span className="px-3 py-1 border border-r-0 rounded-l-md">
+                      +962
+                    </span>
+                    <Input
+                      id="phone"
+                      value={data?.mobile || "not found"}
+                      readOnly
+                      maxLength={9}
+                      className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
+                    />
+                  </div>
                 </Field>
               </FieldGroup>
 
@@ -147,9 +166,9 @@ export default function IndividualForm({
                   </FieldLabel>
                   <Input
                     id="gender"
-                    value="male"
+                    value=". . ."
                     readOnly
-                    className="bg-muted cursor-not-allowed"
+                    className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
                   />
                 </Field>
 
@@ -160,37 +179,9 @@ export default function IndividualForm({
                   </FieldLabel>
                   <Input
                     id="socialStatus"
-                    value="single"
-                    readOnly
-                    className="bg-muted cursor-not-allowed"
-                  />
-                </Field>
-              </FieldGroup>
-
-              {/* email */}
-              <Field>
-                <FieldLabel htmlFor="email">
-                  {t("profile.individual.email")}
-                </FieldLabel>
-                <Input
-                  id="email"
-                  value={data?.mail || "not found"}
-                  readOnly
-                  className="bg-muted cursor-not-allowed"
-                />
-              </Field>
-
-              {/* Residence details */}
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="ResidenceDetails">
-                    {t("profile.individual.ResidenceDetails")}
-                  </FieldLabel>
-                  <Textarea
-                    id="ResidenceDetails"
                     value=". . ."
                     readOnly
-                    className="bg-muted cursor-not-allowed"
+                    className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
                   />
                 </Field>
               </FieldGroup>
@@ -203,9 +194,24 @@ export default function IndividualForm({
                   </FieldLabel>
                   <Input
                     id="residenceValidity"
-                    value="13/12/2025"
+                    value=". . ."
                     readOnly
-                    className="bg-muted cursor-not-allowed"
+                    className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
+                  />
+                </Field>
+              </FieldGroup>
+
+              {/* Residence details */}
+              <FieldGroup>
+                <Field>
+                  <FieldLabel htmlFor="ResidenceDetails">
+                    {t("profile.individual.ResidenceDetails")}
+                  </FieldLabel>
+                  <Textarea
+                    id="ResidenceDetails"
+                    value=". . ."
+                    readOnly
+                    className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
                   />
                 </Field>
               </FieldGroup>
@@ -220,7 +226,7 @@ export default function IndividualForm({
                     id="PassportDetails"
                     value=". . ."
                     readOnly
-                    className="bg-muted cursor-not-allowed"
+                    className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
                   />
                 </Field>
               </FieldGroup>

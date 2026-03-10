@@ -372,7 +372,6 @@ export default function SportComplex({
             <FieldGroup>
               {/* USER CARD */}
               <UserInfoCard name="ليث احمد ابراهيم تنيره" />
-
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <CalendarDays className="h-5 w-5 text-primary" />
@@ -600,7 +599,7 @@ export default function SportComplex({
                       <Button
                         variant="outline"
                         id="date-picker-range"
-                        className="justify-start px-2.5 font-normal bg-accent"
+                        className="justify-start px-2.5 font-normal not-dark:bg-white"
                       >
                         <CalendarIcon />
                         {form.dateRange ? (
@@ -658,6 +657,7 @@ export default function SportComplex({
                             </InputGroupAddon>
                           </InputGroup>
                         </Field>
+
                         <Field>
                           <FieldLabel htmlFor="time-to">
                             {t("reservation.fields.endTime")}
@@ -698,7 +698,7 @@ export default function SportComplex({
                     id="duration"
                     value={String(durationDays)}
                     readOnly
-                    className="bg-muted cursor-not-allowed"
+                    className="bg-muted dark:bg-muted cursor-not-allowed"
                   />
                 </Field>
 
@@ -710,7 +710,7 @@ export default function SportComplex({
                     id="durationHours"
                     value={String(durationHours)}
                     readOnly
-                    className="bg-muted cursor-not-allowed"
+                    className="bg-muted dark:bg-muted  cursor-not-allowed"
                   />
                 </Field>
               </FieldGroup>
