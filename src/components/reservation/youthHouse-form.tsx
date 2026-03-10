@@ -9,7 +9,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { CalendarDays, Hotel, User, House, Volleyball } from "lucide-react";
+import { CalendarDays, Hotel, House, Volleyball } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -37,8 +37,17 @@ import {
 } from "@/components/ui/input-group";
 import { Clock2Icon } from "lucide-react";
 import { z } from "zod";
+import UserInfoCard from "../custom/user-info-card";
 
 type Option = { value: string; label: string };
+type Beneficiary = {
+  nationality: "jordanian" | "nonJordanian" | "";
+  nationalId?: string;
+  civilNumber?: string;
+  personalId?: string;
+  birthDate?: string;
+  phone?: string;
+};
 // type houseOrCampType = "" | "house" | "camp";
 // type serviceType = "" | "activity" | "accommodation" | "both";
 // type FacilityType = "" | "room" | "tent" | "suite" | "chalet";
@@ -278,6 +287,10 @@ export default function YouthHouse({
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [bedsCount, setBedsCount] = useState<number>(1);
+  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([
+    { nationality: "" },
+  ]);
   const today = new Date();
   const maxDate = addMonths(today, 2);
   const showFacilitySection =
@@ -346,7 +359,7 @@ export default function YouthHouse({
     [t],
   );
 
-  const capacityptions: Option[] = useMemo(
+  const capacityOptions: Option[] = useMemo(
     () => [
       { value: "double", label: t("reservation.options.capacity.double") },
       { value: "triple", label: t("reservation.options.capacity.triple") },
@@ -487,6 +500,15 @@ export default function YouthHouse({
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    setBeneficiaries((prev) => {
+      const arr = Array.from(
+        { length: bedsCount },
+        (_, i) => prev[i] || { nationality: "" },
+      );
+      return arr;
+    });
+  }, [bedsCount]);
 
   return (
     <div
@@ -515,60 +537,8 @@ export default function YouthHouse({
         <CardContent className="p-6">
           <form onSubmit={handleSubmit}>
             <FieldGroup>
-              {/* ================= BENEFICIARY INFO CARD ================= */}
-              <Card
-                className="group mt-8 relative overflow-hidden rounded-2xl 
-                            border border-blue-200/40 
-                            bg-gradient-to-br from-blue-50/70 via-white/60 to-blue-100/40 
-                            backdrop-blur-xl 
-                            shadow-lg 
-                            transition-all duration-500 ease-out
-                            hover:-translate-y-1 hover:shadow-2xl hover:border-primary/40"
-              >
-                {/* soft floating glow */}
-                <div className="absolute -top-24 -right-24 w-80 h-80 bg-primary/20 rounded-full blur-3xl opacity-30 transition-all duration-500 group-hover:opacity-50" />
-                <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-blue-300/20 rounded-full blur-3xl opacity-20 transition-all duration-500 group-hover:opacity-40" />
-
-                <CardContent className="relative p-8">
-                  <div className="flex items-center justify-between flex-wrap gap-6">
-                    {/* Left Section */}
-                    <div className="flex items-center gap-6">
-                      {/* Avatar */}
-                      <div className="relative transition-all duration-500 group-hover:scale-105">
-                        <div
-                          className="w-20 h-20 rounded-full 
-                                    bg-white/60 backdrop-blur-md 
-                                    flex items-center justify-center 
-                                    ring-4 ring-primary/20 
-                                    shadow-md 
-                                    transition-all duration-500 
-                                    group-hover:ring-primary/40 group-hover:shadow-xl"
-                        >
-                          <User className="h-10 w-10 text-primary transition-all duration-500 group-hover:scale-110" />
-                        </div>
-
-                        {/* Active dot */}
-                        <span className="absolute bottom-1 right-1 w-4 h-4 bg-emerald-400 border-2 border-white rounded-full" />
-                      </div>
-
-                      {/* Info */}
-                      <div className="space-y-1">
-                        <p className="text-xs uppercase tracking-widest text-primary/80">
-                          {t("reservation.sections.personal")}
-                        </p>
-
-                        <h3 className="text-2xl font-bold text-slate-800 tracking-wide">
-                          {t("shared.beneficiaryName")}
-                        </h3>
-
-                        <p className="text-sm text-slate-500">
-                          ليث احمد ابراهيم تنيره
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              {/* USER CARD */}
+              <UserInfoCard name="ليث احمد ابراهيم تنيره" />
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -1036,7 +1006,167 @@ export default function YouthHouse({
                           </FieldLabel>
                         </Field>
                       )}
+                      {form.facility === "room" && form.isShared && (
+                        <Field>
+                          <FieldLabel>
+                            عدد الأسرّة <span className="text-red-500">*</span>
+                          </FieldLabel>
 
+                          <Input
+                            type="number"
+                            min={1}
+                            max={5}
+                            value={bedsCount}
+                            onChange={(e) =>
+                              setBedsCount(Number(e.target.value))
+                            }
+                          />
+                        </Field>
+                      )}
+                      {form.facility === "room" &&
+                        form.isShared &&
+                        beneficiaries.map((beneficiary, index) => (
+                          <Card
+                            key={index}
+                            className="p-4 border mt-4 bg-muted/30"
+                          >
+                            <h3 className="font-semibold mb-4">
+                              معلومات المستفيد {index + 1}
+                            </h3>
+
+                            <FieldGroup className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                              {/* nationality */}
+                              <Field>
+                                <FieldLabel>الجنسية</FieldLabel>
+
+                                <Select
+                                  dir="rtl"
+                                  value={beneficiary.nationality}
+                                  onValueChange={(value) => {
+                                    const updated = [...beneficiaries];
+                                    updated[index].nationality =
+                                      value as Beneficiary["nationality"];
+                                    setBeneficiaries(updated);
+                                  }}
+                                >
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="اختر الجنسية" />
+                                  </SelectTrigger>
+
+                                  <SelectContent>
+                                    <SelectItem value="jordanian">
+                                      أردني
+                                    </SelectItem>
+                                    <SelectItem value="nonJordanian">
+                                      غير أردني
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </Field>
+
+                              {/* الأردني */}
+                              {beneficiary.nationality === "jordanian" && (
+                                <>
+                                  <Field>
+                                    <FieldLabel>الرقم الوطني</FieldLabel>
+                                    <Input
+                                      value={beneficiary.nationalId || ""}
+                                      onChange={(e) => {
+                                        const updated = [...beneficiaries];
+                                        updated[index].nationalId =
+                                          e.target.value;
+                                        setBeneficiaries(updated);
+                                      }}
+                                    />
+                                  </Field>
+
+                                  <Field>
+                                    <FieldLabel>رقم القيد</FieldLabel>
+                                    <Input
+                                      value={beneficiary.civilNumber || ""}
+                                      onChange={(e) => {
+                                        const updated = [...beneficiaries];
+                                        updated[index].civilNumber =
+                                          e.target.value;
+                                        setBeneficiaries(updated);
+                                      }}
+                                    />
+                                  </Field>
+
+                                  <Field>
+                                    <FieldLabel>تاريخ الميلاد</FieldLabel>
+                                    <Input
+                                      type="date"
+                                      value={beneficiary.birthDate || ""}
+                                      onChange={(e) => {
+                                        const updated = [...beneficiaries];
+                                        updated[index].birthDate =
+                                          e.target.value;
+                                        setBeneficiaries(updated);
+                                      }}
+                                    />
+                                  </Field>
+
+                                  <Field>
+                                    <FieldLabel>الهاتف</FieldLabel>
+                                    <Input
+                                      value={beneficiary.phone || ""}
+                                      onChange={(e) => {
+                                        const updated = [...beneficiaries];
+                                        updated[index].phone = e.target.value;
+                                        setBeneficiaries(updated);
+                                      }}
+                                    />
+                                  </Field>
+                                </>
+                              )}
+
+                              {/* غير الأردني */}
+                              {beneficiary.nationality === "nonJordanian" && (
+                                <>
+                                  <Field>
+                                    <FieldLabel>الرقم الشخصي</FieldLabel>
+                                    <Input
+                                      value={beneficiary.personalId || ""}
+                                      onChange={(e) => {
+                                        const updated = [...beneficiaries];
+                                        updated[index].personalId =
+                                          e.target.value;
+                                        setBeneficiaries(updated);
+                                      }}
+                                    />
+                                  </Field>
+
+                                  <Field>
+                                    <FieldLabel>تاريخ الميلاد</FieldLabel>
+                                    <Input
+                                      type="date"
+                                      value={beneficiary.birthDate || ""}
+                                      onChange={(e) => {
+                                        const updated = [...beneficiaries];
+                                        updated[index].birthDate =
+                                          e.target.value;
+                                        setBeneficiaries(updated);
+                                      }}
+                                    />
+                                  </Field>
+
+                                  <Field>
+                                    <FieldLabel>الهاتف</FieldLabel>
+                                    <Input
+                                      value={beneficiary.phone || ""}
+                                      onChange={(e) => {
+                                        const updated = [...beneficiaries];
+                                        updated[index].phone = e.target.value;
+                                        setBeneficiaries(updated);
+                                      }}
+                                    />
+                                  </Field>
+                                </>
+                              )}
+                            </FieldGroup>
+                          </Card>
+                        ))}
                       {form.facility === "tent" && (
                         <Field orientation="horizontal">
                           <Checkbox
@@ -1056,45 +1186,46 @@ export default function YouthHouse({
                         </Field>
                       )}
 
-                      {form.facility && (
-                        <Field>
-                          <FieldLabel htmlFor="capacity">
-                            {t("reservation.fields.capacity")}{" "}
-                            <span className="text-red-500">*</span>
-                          </FieldLabel>
-                          <Select
-                            value={form.capacity}
-                            onValueChange={(value) =>
-                              setForm((prev) => ({
-                                ...prev,
-                                capacity: value as formType["capacity"],
-                              }))
-                            }
-                            dir={t("dir")}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue
-                                placeholder={t(
-                                  "reservation.placeholders.select",
-                                )}
-                              />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                {capacityptions.map((option) => (
-                                  <SelectItem
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                          <FieldError>{formErrors.capacity}</FieldError>
-                        </Field>
-                      )}
+                      {form.facility &&
+                        !(form.facility === "room" && form.isShared) && (
+                          <Field>
+                            <FieldLabel htmlFor="capacity">
+                              {t("reservation.fields.capacity")}{" "}
+                              <span className="text-red-500">*</span>
+                            </FieldLabel>
+                            <Select
+                              value={form.capacity}
+                              onValueChange={(value) =>
+                                setForm((prev) => ({
+                                  ...prev,
+                                  capacity: value as formType["capacity"],
+                                }))
+                              }
+                              dir={t("dir")}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue
+                                  placeholder={t(
+                                    "reservation.placeholders.select",
+                                  )}
+                                />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  {capacityOptions.map((option) => (
+                                    <SelectItem
+                                      key={option.value}
+                                      value={option.value}
+                                    >
+                                      {option.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                            <FieldError>{formErrors.capacity}</FieldError>
+                          </Field>
+                        )}
                     </FieldGroup>
 
                     <hr className="border-primary" />
