@@ -123,12 +123,12 @@
     "cancel": "Cancel"
   },
   "shared": {
-    "beneficaryName": "Beneficiary name",
+    "beneficiaryName": "Beneficiary name",
     "governorate": "Governorate",
     "district": "District",
     "direrctorate": "Directorate",
     "placeholder": {
-      "beneficaryName": "Enter beneficiary name",
+      "beneficiaryName": "Enter beneficiary name",
       "governorate": "Select governorate",
       "district": "Select district",
       "direrctorate": "Select direrctorate"
@@ -233,7 +233,11 @@
           "hospitalitySites": "Hospitality Sites",
           "eventHalls": "Event Halls",
           "cafeterias": "Cafeterias",
-          "trainingFacilities": "Training Facilities"
+          "trainingFacilities": "Training Facilities",
+          "nationality": {
+            "jordanian": "Jordanian",
+            "nonJordanian": "Non-Jordanian"
+          }
         }
       },
       "units": {
@@ -285,7 +289,16 @@
       "groupLeader": "Group leader",
       "participantsInfo": "Participants classification",
       "membershipType": "Membership type",
-      "discountDate": "Discount book date"
+      "discountDate": "Discount book date",
+      "nationalId": "National ID",
+      "personalId": "Personal ID",
+      "civilNumber": "Civil number",
+      "birthDate": "Birth date",
+      "phone": "Phone number",
+      "bedsCount": "Number of beds",
+      "beneficiaryInfo": "Beneficiary information",
+      "nationality": "Beneficiary nationality",
+      "selectNationality": "Select nationality"
     },
     "placeholders": {
       "select": "Select...",
@@ -298,6 +311,10 @@
       "isSubmitting": "Submitting..."
     },
     "options": {
+      "nationality": {
+      "jordanian": "Jordanian",
+      "nonJordanian": "Non-Jordanian"
+    },
       "service": {
         "accommodation": "Accommodation",
         "activity": "Activity",
@@ -373,7 +390,7 @@
     },
     "nationality": {
       "jordanian": "Jordanian",
-      "non-jordanian": "Non-Jordanian"
+      "nonJordanian": "Non-Jordanian"
     },
     "membershipType": {
       "jordanian": "Jordanian Youth Houses",

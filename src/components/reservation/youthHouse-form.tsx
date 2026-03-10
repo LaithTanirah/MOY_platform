@@ -1009,7 +1009,8 @@ export default function YouthHouse({
                       {form.facility === "room" && form.isShared && (
                         <Field>
                           <FieldLabel>
-                            عدد الأسرّة <span className="text-red-500">*</span>
+                            {t("reservation.fields.bedsCount")}{" "}
+                            <span className="text-red-500">*</span>
                           </FieldLabel>
 
                           <Input
@@ -1031,13 +1032,16 @@ export default function YouthHouse({
                             className="p-4 border mt-4 bg-muted/30"
                           >
                             <h3 className="font-semibold mb-4">
-                              معلومات المستفيد {index + 1}
+                              {t("reservation.fields.beneficiaryInfo")}{" "}
+                              {index + 1}
                             </h3>
 
                             <FieldGroup className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                               {/* nationality */}
                               <Field>
-                                <FieldLabel>الجنسية</FieldLabel>
+                                <FieldLabel>
+                                  {t("reservation.fields.nationality")}
+                                </FieldLabel>
 
                                 <Select
                                   dir="rtl"
@@ -1050,15 +1054,24 @@ export default function YouthHouse({
                                   }}
                                 >
                                   <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="اختر الجنسية" />
+                                    <SelectValue
+                                      placeholder={t(
+                                        "reservation.fields.selectNationality",
+                                      )}
+                                    />
                                   </SelectTrigger>
 
                                   <SelectContent>
                                     <SelectItem value="jordanian">
-                                      أردني
+                                      {t(
+                                        "reservation.options.nationality.jordanian",
+                                      )}
                                     </SelectItem>
+
                                     <SelectItem value="nonJordanian">
-                                      غير أردني
+                                      {t(
+                                        "reservation.options.nationality.nonJordanian",
+                                      )}
                                     </SelectItem>
                                   </SelectContent>
                                 </Select>
@@ -1068,7 +1081,9 @@ export default function YouthHouse({
                               {beneficiary.nationality === "jordanian" && (
                                 <>
                                   <Field>
-                                    <FieldLabel>الرقم الوطني</FieldLabel>
+                                    <FieldLabel>
+                                      {t("reservation.fields.nationalId")}
+                                    </FieldLabel>
                                     <Input
                                       value={beneficiary.nationalId || ""}
                                       onChange={(e) => {
@@ -1081,7 +1096,9 @@ export default function YouthHouse({
                                   </Field>
 
                                   <Field>
-                                    <FieldLabel>رقم القيد</FieldLabel>
+                                    <FieldLabel>
+                                      {t("reservation.fields.civilNumber")}
+                                    </FieldLabel>
                                     <Input
                                       value={beneficiary.civilNumber || ""}
                                       onChange={(e) => {
@@ -1094,7 +1111,9 @@ export default function YouthHouse({
                                   </Field>
 
                                   <Field>
-                                    <FieldLabel>تاريخ الميلاد</FieldLabel>
+                                    <FieldLabel>
+                                      {t("reservation.fields.birthDate")}
+                                    </FieldLabel>
                                     <Input
                                       type="date"
                                       value={beneficiary.birthDate || ""}
@@ -1108,7 +1127,9 @@ export default function YouthHouse({
                                   </Field>
 
                                   <Field>
-                                    <FieldLabel>الهاتف</FieldLabel>
+                                    <FieldLabel>
+                                      {t("reservation.fields.phone")}
+                                    </FieldLabel>
                                     <Input
                                       value={beneficiary.phone || ""}
                                       onChange={(e) => {
@@ -1125,7 +1146,9 @@ export default function YouthHouse({
                               {beneficiary.nationality === "nonJordanian" && (
                                 <>
                                   <Field>
-                                    <FieldLabel>الرقم الشخصي</FieldLabel>
+                                    <FieldLabel>
+                                      {t("reservation.fields.personalId")}
+                                    </FieldLabel>
                                     <Input
                                       value={beneficiary.personalId || ""}
                                       onChange={(e) => {
@@ -1138,7 +1161,7 @@ export default function YouthHouse({
                                   </Field>
 
                                   <Field>
-                                    <FieldLabel>تاريخ الميلاد</FieldLabel>
+                                    {t("reservation.fields.birthDate")}
                                     <Input
                                       type="date"
                                       value={beneficiary.birthDate || ""}
@@ -1152,7 +1175,7 @@ export default function YouthHouse({
                                   </Field>
 
                                   <Field>
-                                    <FieldLabel>الهاتف</FieldLabel>
+                                    {t("reservation.fields.phone")}
                                     <Input
                                       value={beneficiary.phone || ""}
                                       onChange={(e) => {

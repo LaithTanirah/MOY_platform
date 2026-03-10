@@ -279,7 +279,16 @@
       "groupLeader": "مسؤول المجموعة",
       "participantsInfo": "تصنيف المشاركين",
       "membershipType": "نوع العضوية",
-      "discountDate": "تاريخ كتاب خصم الوزير"
+      "discountDate": "تاريخ كتاب خصم الوزير",
+      "nationalId": "الرقم الوطني",
+      "personalId": "الرقم الشخصي",
+      "civilNumber": "رقم القيد",
+      "birthDate": "تاريخ الميلاد",
+      "phone": "الهاتف",
+      "bedsCount": "عدد الأسرّة",
+      "beneficiaryInfo": "بيانات المستفيد",
+      "nationality": "الجنسية",
+      "selectNationality": "اختر الجنسية"
     },
     "placeholders": {
       "select": "اختر...",
@@ -354,7 +363,7 @@
       },
       "nationality": {
         "jordanian": "أردني",
-        "non-jordanian": "غير أردني"
+        "nonJordanian": "غير أردني"
       },
       "membershipType": {
         "jordanian": "بيوت الشباب الأردنية",
