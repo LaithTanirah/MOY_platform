@@ -9,7 +9,17 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { CalendarDays, Hotel, House, Volleyball } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronDown,
+  ChevronUp,
+  Hotel,
+  House,
+  IdCard,
+  Phone,
+  User,
+  Volleyball,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -38,6 +48,7 @@ import {
 import { Clock2Icon } from "lucide-react";
 import { z } from "zod";
 import UserInfoCard from "../custom/user-info-card";
+import { AnimatePresence, motion } from "framer-motion";
 
 type Option = { value: string; label: string };
 type Beneficiary = {
@@ -47,6 +58,8 @@ type Beneficiary = {
   personalId?: string;
   birthDate?: string;
   phone?: string;
+  open?: boolean;
+   dateOfBirth?: Date; 
 };
 // type houseOrCampType = "" | "house" | "camp";
 // type serviceType = "" | "activity" | "accommodation" | "both";
@@ -54,6 +67,14 @@ type Beneficiary = {
 // type capacityType = "normal" | "double" | "triple" | "four" | "five";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+const formatRegistration = (value: string) => {
+  const digits = value.replace(/\D/g, "").slice(0, 6);
+
+  if (digits.length <= 3) return digits;
+
+  return digits.slice(0, 3) + "/" + digits.slice(3);
+};
 const formSchema = (t: any) =>
   z
     .object({
@@ -68,9 +89,16 @@ const formSchema = (t: any) =>
           to: z.date(),
         })
         .optional(),
+      RegistrationNumber: z
+        .string()
+        .min(1, t("errors.required"))
+        .regex(/^\d{3}\/\d{3}$/, t("errors.invalidRegistration")),
+
       startTime: z.string().optional(),
       endTime: z.string().optional(),
       dateSingle: z.date().optional(),
+
+      delegateDateOfBirth: z.date().optional(),
 
       beneficiaries: z
         .number(t("errors.digitsOnly"))
@@ -107,6 +135,13 @@ const formSchema = (t: any) =>
           code: z.ZodIssueCode.custom,
           path: ["dateRange"],
           message: t("errors.time"),
+        });
+      }
+      if (!data.delegateDateOfBirth) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["delegateDateOfBirth"],
+          message: t("errors.required"),
         });
       }
 
@@ -259,8 +294,9 @@ export default function YouthHouse({
     serviceType: "accommodation",
     houseOrCamp: "house",
 
-    nameOfhouse: undefined,
+    RegistrationNumber: "",
 
+    nameOfhouse: undefined,
     dateRange: undefined,
     startTime: undefined,
     endTime: undefined,
@@ -291,6 +327,7 @@ export default function YouthHouse({
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([
     { nationality: "" },
   ]);
+  const [open, setOpen] = useState(false);
   const today = new Date();
   const maxDate = addMonths(today, 2);
   const showFacilitySection =
@@ -1029,165 +1066,306 @@ export default function YouthHouse({
                         beneficiaries.map((beneficiary, index) => (
                           <Card
                             key={index}
-                            className="p-4 border mt-4 bg-muted/30"
+                            className="p-0 border-none bg-transparent"
                           >
-                            <h3 className="font-semibold mb-4">
-                              {t("reservation.fields.beneficiaryInfo")}{" "}
-                              {index + 1}
-                            </h3>
+                            <motion.div
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: index * 0.1 }}
+                              className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden"
+                            >
+                              {/* Header */}
+                              <div
+                                className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                onClick={() =>
+                                  setBeneficiaries((prev) =>
+                                    prev.map((b, i) =>
+                                      i === index ? { ...b, open: !b.open } : b,
+                                    ),
+                                  )
+                                }
+                              >
+                                <div className="flex items-center gap-2 text-lg font-semibold text-primary">
+                                  <User className="w-5 h-5" />{" "}
+                                  {t("reservation.fields.beneficiaryInfo")}{" "}
+                                  {index + 1}
+                                </div>
+                                <div>
+                                  {beneficiary.open ? (
+                                    <ChevronUp className="w-5 h-5" />
+                                  ) : (
+                                    <ChevronDown className="w-5 h-5" />
+                                  )}
+                                </div>
+                              </div>
 
-                            <FieldGroup className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                              {/* nationality */}
-                              <Field>
-                                <FieldLabel>
-                                  {t("reservation.fields.nationality")}
-                                </FieldLabel>
+                              {/* Content */}
+                              <AnimatePresence>
+                                {beneficiary.open && (
+                                  <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: "auto", opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3"
+                                  >
+                                    {/* Nationality */}
+                                    <Field>
+                                      <FieldLabel>
+                                        <User className="w-4 h-4 inline mr-1 text-gray-500" />
+                                        {t("reservation.fields.nationality")}
+                                      </FieldLabel>
+                                      <Select
+                                        dir="rtl"
+                                        value={beneficiary.nationality}
+                                        onValueChange={(value) => {
+                                          const updated = [...beneficiaries];
+                                          updated[index].nationality =
+                                            value as Beneficiary["nationality"];
+                                          setBeneficiaries(updated);
+                                        }}
+                                      >
+                                        <SelectTrigger className="w-full">
+                                          <SelectValue
+                                            placeholder={t(
+                                              "reservation.fields.selectNationality",
+                                            )}
+                                          />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="jordanian">
+                                            {t(
+                                              "reservation.options.nationality.jordanian",
+                                            )}
+                                          </SelectItem>
+                                          <SelectItem value="nonJordanian">
+                                            {t(
+                                              "reservation.options.nationality.nonJordanian",
+                                            )}
+                                          </SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </Field>
 
-                                <Select
-                                  dir="rtl"
-                                  value={beneficiary.nationality}
-                                  onValueChange={(value) => {
-                                    const updated = [...beneficiaries];
-                                    updated[index].nationality =
-                                      value as Beneficiary["nationality"];
-                                    setBeneficiaries(updated);
-                                  }}
-                                >
-                                  <SelectTrigger className="w-full">
-                                    <SelectValue
-                                      placeholder={t(
-                                        "reservation.fields.selectNationality",
-                                      )}
-                                    />
-                                  </SelectTrigger>
+                                    {/* Jordanian Fields */}
+                                    {beneficiary.nationality ===
+                                      "jordanian" && (
+                                      <>
+                                        <Field>
+                                          <FieldLabel>
+                                            <IdCard className="w-4 h-4 inline mr-1 text-gray-500" />
+                                            {t("reservation.fields.nationalId")}
+                                          </FieldLabel>
+                                          <Input
+                                            value={beneficiary.nationalId || ""}
+                                            onChange={(e) => {
+                                              const updated = [
+                                                ...beneficiaries,
+                                              ];
+                                              updated[index].nationalId =
+                                                e.target.value;
+                                              setBeneficiaries(updated);
+                                            }}
+                                          />
+                                        </Field>
 
-                                  <SelectContent>
-                                    <SelectItem value="jordanian">
-                                      {t(
-                                        "reservation.options.nationality.jordanian",
-                                      )}
-                                    </SelectItem>
+                                        <Field>
+                                          <FieldLabel htmlFor="RegistrationNumber">
+                                            {t("auth.RegistrationNumber")}
+                                            <span className="text-red-500">
+                                              *
+                                            </span>
+                                          </FieldLabel>
+                                          <Input
+                                            id="RegistrationNumber"
+                                            dir="ltr"
+                                            type="text"
+                                            value={form.RegistrationNumber}
+                                            onChange={(e) =>
+                                              setForm((prev) => ({
+                                                ...prev,
+                                                RegistrationNumber:
+                                                  formatRegistration(
+                                                    e.target.value,
+                                                  ),
+                                              }))
+                                            }
+                                            placeholder="123/456"
+                                            maxLength={7}
+                                            className="text-center tracking-[0.5em]"
+                                          />
+                                          <FieldError>
+                                            {formErrors.RegistrationNumber}
+                                          </FieldError>
+                                        </Field>
 
-                                    <SelectItem value="nonJordanian">
-                                      {t(
-                                        "reservation.options.nationality.nonJordanian",
-                                      )}
-                                    </SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </Field>
+                                        <Field className="mx-auto">
+                                          <FieldLabel htmlFor="date">
+                                            {t("auth.dateofBirth")}
+                                          </FieldLabel>
+                                          <Popover
+                                            open={open}
+                                            onOpenChange={setOpen}
+                                          >
+                                            <PopoverTrigger asChild>
+                                              <Button
+                                                variant="outline"
+                                                id="date"
+                                                className="justify-start font-normal bg-white"
+                                              >
+                                                <CalendarIcon />
+                                                {beneficiary.dateOfBirth
+                                                  ? beneficiary.dateOfBirth.toLocaleDateString()
+                                                  : t(
+                                                      "reservation.fields.PickDate",
+                                                    )}
+                                              </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent
+                                              className="w-auto overflow-hidden p-0"
+                                              align="start"
+                                            >
+                                              <Calendar
+                                                mode="single"
+                                                selected={
+                                                  form.delegateDateOfBirth
+                                                }
+                                                defaultMonth={
+                                                  form.delegateDateOfBirth
+                                                }
+                                                captionLayout="dropdown"
+                                                onSelect={(value) => {
+                                                  setForm((prev) => ({
+                                                    ...prev,
+                                                    delegateDateOfBirth:
+                                                      value as formType["delegateDateOfBirth"],
+                                                  }));
+                                                  setOpen(false);
+                                                }}
+                                              />
+                                            </PopoverContent>
+                                          </Popover>
+                                          <FieldError>
+                                            {formErrors.delegateDateOfBirth}
+                                          </FieldError>
+                                        </Field>
 
-                              {/* الأردني */}
-                              {beneficiary.nationality === "jordanian" && (
-                                <>
-                                  <Field>
-                                    <FieldLabel>
-                                      {t("reservation.fields.nationalId")}
-                                    </FieldLabel>
-                                    <Input
-                                      value={beneficiary.nationalId || ""}
-                                      onChange={(e) => {
-                                        const updated = [...beneficiaries];
-                                        updated[index].nationalId =
-                                          e.target.value;
-                                        setBeneficiaries(updated);
-                                      }}
-                                    />
-                                  </Field>
+                                        <Field>
+                                          <FieldLabel>
+                                            <Phone className="w-4 h-4 inline mr-1 text-gray-500" />
+                                            {t("reservation.fields.phone")}
+                                          </FieldLabel>
+                                          <Input
+                                            value={beneficiary.phone || ""}
+                                            onChange={(e) => {
+                                              const updated = [
+                                                ...beneficiaries,
+                                              ];
+                                              updated[index].phone =
+                                                e.target.value;
+                                              setBeneficiaries(updated);
+                                            }}
+                                          />
+                                        </Field>
+                                      </>
+                                    )}
 
-                                  <Field>
-                                    <FieldLabel>
-                                      {t("reservation.fields.civilNumber")}
-                                    </FieldLabel>
-                                    <Input
-                                      value={beneficiary.civilNumber || ""}
-                                      onChange={(e) => {
-                                        const updated = [...beneficiaries];
-                                        updated[index].civilNumber =
-                                          e.target.value;
-                                        setBeneficiaries(updated);
-                                      }}
-                                    />
-                                  </Field>
+                                    {/* Non-Jordanian Fields */}
+                                    {beneficiary.nationality ===
+                                      "nonJordanian" && (
+                                      <>
+                                        <Field>
+                                          <FieldLabel>
+                                            <IdCard className="w-4 h-4 inline mr-1 text-gray-500" />
+                                            {t("reservation.fields.personalId")}
+                                          </FieldLabel>
+                                          <Input
+                                            value={beneficiary.personalId || ""}
+                                            onChange={(e) => {
+                                              const updated = [
+                                                ...beneficiaries,
+                                              ];
+                                              updated[index].personalId =
+                                                e.target.value;
+                                              setBeneficiaries(updated);
+                                            }}
+                                          />
+                                        </Field>
 
-                                  <Field>
-                                    <FieldLabel>
-                                      {t("reservation.fields.birthDate")}
-                                    </FieldLabel>
-                                    <Input
-                                      type="date"
-                                      value={beneficiary.birthDate || ""}
-                                      onChange={(e) => {
-                                        const updated = [...beneficiaries];
-                                        updated[index].birthDate =
-                                          e.target.value;
-                                        setBeneficiaries(updated);
-                                      }}
-                                    />
-                                  </Field>
+                                        <Field className="mx-auto">
+                                          <FieldLabel htmlFor="date">
+                                            {t("auth.dateofBirth")}
+                                          </FieldLabel>
+                                          <Popover
+                                            open={open}
+                                            onOpenChange={setOpen}
+                                          >
+                                            <PopoverTrigger asChild>
+                                              <Button
+                                                variant="outline"
+                                                id="date"
+                                                className="justify-start font-normal bg-white"
+                                              >
+                                                <CalendarIcon />
+                                                {beneficiary.dateOfBirth
+                                                  ? beneficiary.dateOfBirth.toLocaleDateString()
+                                                  : t(
+                                                      "reservation.fields.PickDate",
+                                                    )}
+                                              </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent
+                                              className="w-auto overflow-hidden p-0"
+                                              align="start"
+                                            >
+                                              <Calendar
+                                                mode="single"
+                                                selected={
+                                                  form.delegateDateOfBirth
+                                                }
+                                                defaultMonth={
+                                                  form.delegateDateOfBirth
+                                                }
+                                                captionLayout="dropdown"
+                                                onSelect={(value) => {
+                                                  setForm((prev) => ({
+                                                    ...prev,
+                                                    delegateDateOfBirth:
+                                                      value as formType["delegateDateOfBirth"],
+                                                  }));
+                                                  setOpen(false);
+                                                }}
+                                              />
+                                            </PopoverContent>
+                                          </Popover>
+                                          <FieldError>
+                                            {formErrors.delegateDateOfBirth}
+                                          </FieldError>
+                                        </Field>
 
-                                  <Field>
-                                    <FieldLabel>
-                                      {t("reservation.fields.phone")}
-                                    </FieldLabel>
-                                    <Input
-                                      value={beneficiary.phone || ""}
-                                      onChange={(e) => {
-                                        const updated = [...beneficiaries];
-                                        updated[index].phone = e.target.value;
-                                        setBeneficiaries(updated);
-                                      }}
-                                    />
-                                  </Field>
-                                </>
-                              )}
-
-                              {/* غير الأردني */}
-                              {beneficiary.nationality === "nonJordanian" && (
-                                <>
-                                  <Field>
-                                    <FieldLabel>
-                                      {t("reservation.fields.personalId")}
-                                    </FieldLabel>
-                                    <Input
-                                      value={beneficiary.personalId || ""}
-                                      onChange={(e) => {
-                                        const updated = [...beneficiaries];
-                                        updated[index].personalId =
-                                          e.target.value;
-                                        setBeneficiaries(updated);
-                                      }}
-                                    />
-                                  </Field>
-
-                                  <Field>
-                                    {t("reservation.fields.birthDate")}
-                                    <Input
-                                      type="date"
-                                      value={beneficiary.birthDate || ""}
-                                      onChange={(e) => {
-                                        const updated = [...beneficiaries];
-                                        updated[index].birthDate =
-                                          e.target.value;
-                                        setBeneficiaries(updated);
-                                      }}
-                                    />
-                                  </Field>
-
-                                  <Field>
-                                    {t("reservation.fields.phone")}
-                                    <Input
-                                      value={beneficiary.phone || ""}
-                                      onChange={(e) => {
-                                        const updated = [...beneficiaries];
-                                        updated[index].phone = e.target.value;
-                                        setBeneficiaries(updated);
-                                      }}
-                                    />
-                                  </Field>
-                                </>
-                              )}
-                            </FieldGroup>
+                                        <Field>
+                                          <FieldLabel>
+                                            <Phone className="w-4 h-4 inline mr-1 text-gray-500" />
+                                            {t("reservation.fields.phone")}
+                                          </FieldLabel>
+                                          <Input
+                                            value={beneficiary.phone || ""}
+                                            onChange={(e) => {
+                                              const updated = [
+                                                ...beneficiaries,
+                                              ];
+                                              updated[index].phone =
+                                                e.target.value;
+                                              setBeneficiaries(updated);
+                                            }}
+                                          />
+                                        </Field>
+                                      </>
+                                    )}
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </motion.div>
                           </Card>
                         ))}
                       {form.facility === "tent" && (
